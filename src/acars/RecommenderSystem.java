@@ -275,6 +275,21 @@ public class RecommenderSystem {
         System.out.println(totalObjectInClusters);
     }
 
+    // Calculate total cluster cost
+    int calculateTotalCostofAllClusters() {
+        int totalCostofCurrentCluster = 0;
+        int totalCostofAllClusters = 0;
+        for (int i = 0; i < clusterCentroids.size(); i++) {
+            int currentCentroid = clusterCentroids.get(i);
+            for (int p = 0; p < arrayListofCluster.get(i).size(); p++) {
+                int currentItem = arrayListofCluster.get(i).get(p);
+                totalCostofCurrentCluster += diff[currentCentroid][currentItem];
+            }
+            totalCostofAllClusters += totalCostofCurrentCluster;
+        }
+        return totalCostofAllClusters;
+    }
+
 
     // ============================================================ //
     // K-Means Clustering
@@ -447,6 +462,64 @@ public class RecommenderSystem {
     // ============================================================ //
     // K-Medoids Clustering
     // ============================================================ //
+    void K_MedoidsClustering() {
+        clusterCentroids = new ArrayList < Integer > (); // Arraylist of initial centroids
+
+        // Find 100 random centroids (K) within dataset
+        clusterCentroids = uniqueRandomInRange(clusterCentroids);
+        calculateDistance();
+
+        // Display initial K-Medoids centroids
+        displayClusterCentroids();
+
+        //  Populate each cluster with closest objects to its centroid
+        for (int i = 1; i < mxuid; i++) { // i = current item
+            // Check if item itself is centroid
+            // Because sometimes 2 users' diff may be 0.0
+            boolean isCentroid = false;
+            for (int j = 0; j < clusterCentroids.size(); j++) {
+                int centroid = clusterCentroids.get(j);
+                if (i == centroid) { // If item itself is centroid
+                    arrayListofCluster.get(j).add(i); // Add centroid to its own cluster
+                    isCentroid = true;
+                }
+            }
+
+            double tempMax = 1000000;
+            int tempCentroid = 0;
+            for (int k = 0; k < clusterCentroids.size(); k++) { // Here, clusterCentroids.size() = 61
+                int currentCentroid = clusterCentroids.get(k);
+                if (isCentroid == false && diff[i][currentCentroid] < tempMax) {
+                    tempMax = diff[i][currentCentroid]; // tempMax will contain the closest centroid distance from a object
+                    tempCentroid = currentCentroid; // The closest centroid
+                }
+            }
+
+            int centroidPosition = 0; // centroid position in arraylist
+            for (int m = 0; m < clusterCentroids.size(); m++) { // Here, clusterCentroids.size() = 61
+                int matchCentroid = clusterCentroids.get(m);
+                if (matchCentroid == tempCentroid) {
+                    centroidPosition = m;
+                    break;
+                }
+            }
+
+            if (tempCentroid != 0) // keeps away all centroids from getting added again
+                arrayListofCluster.get(centroidPosition).add(i);
+        }
+
+        // Display initial clusters
+        displayClusters();
+
+        // Display total number of objects in all clusters
+        displayTotalNumOfObjectsInClusters();
+
+        // Calculate total cost of initial clusters
+        int totalCostofInitClusters = calculateTotalCostofAllClusters();
+
+        System.out.println("Total Cost of Initial Cluster: " + totalCostofInitClusters);
+
+    }
 
     // ============================================================ //
     // DBSCAN Clustering

@@ -275,7 +275,7 @@ public class RecommenderSystem {
         System.out.println(totalObjectInClusters);
     }
 
-    // Calculate total cluster cost
+    // Calculate total cost of clusters
     int calculateTotalCostofAllClusters() {
         int totalCostofCurrentCluster = 0;
         int totalCostofAllClusters = 0;
@@ -517,7 +517,7 @@ public class RecommenderSystem {
         // Calculate total cost of initial clusters
         int totalCostofInitClusters = calculateTotalCostofAllClusters();
 
-        System.out.println("Total Cost of Initial Cluster: " + totalCostofInitClusters);
+        System.out.println("Total Cost of Initial Clusters: " + totalCostofInitClusters);
 
         //================
         // Iteration
@@ -563,6 +563,76 @@ public class RecommenderSystem {
         for (int i = 0; i < tempClusterCentroids.size(); i++) {
             System.out.println((i + 1) + " , " + tempClusterCentroids.get(i));
         }
+
+
+        List < List < Integer >> arrayListofClusterTemp = new ArrayList < List < Integer >> (mxuid);
+        for (int i = 0; i < mxuid; i++) {
+            arrayListofClusterTemp.add(new ArrayList < Integer > ());
+        }
+        //  Populate each cluster with closest objects to its centroid
+        for (int i = 1; i < mxuid; i++) { // i = current item
+            // Check if item itself is centroid
+            // Because sometimes 2 users' diff may be 0.0
+            boolean isNewCentroid = false;
+            for (int j = 0; j < tempClusterCentroids.size(); j++) {
+                int centroid = tempClusterCentroids.get(j);
+                if (i == centroid) { // If item itself is centroid
+                    arrayListofClusterTemp.get(j).add(i); // Add centroid to its own cluster
+                    isNewCentroid = true;
+                }
+            }
+
+            double tempMax = 1000000;
+            int tempCentroid = 0;
+            for (int k = 0; k < tempClusterCentroids.size(); k++) { // Here, tempClusterCentroids.size() = 100
+                int currentCentroid = tempClusterCentroids.get(k);
+                if (isNewCentroid == false && diff[i][currentCentroid] < tempMax) {
+                    tempMax = diff[i][currentCentroid]; // tempMax will contain the closest centroid distance from a object
+                    tempCentroid = currentCentroid; // The closest centroid
+                }
+            }
+
+            int centroidPosition = 0; // centroid position in arraylist
+            for (int m = 0; m < tempClusterCentroids.size(); m++) { // Here, tempClusterCentroids.size() = 100
+                int matchCentroid = tempClusterCentroids.get(m);
+                if (matchCentroid == tempCentroid) {
+                    centroidPosition = m;
+                    break;
+                }
+            }
+
+            if (tempCentroid != 0) // keeps away all centroids from getting added again
+                arrayListofClusterTemp.get(centroidPosition).add(i);
+        }
+
+        // Display objects of temp clusters
+        System.out.println("tempClusters after swapping a centroid first time:");
+        for (int i = 0; i < tempClusterCentroids.size(); i++) {
+            System.out.println((i + 1) + " | centroid: " + tempClusterCentroids.get(i)); // displays centroid
+            for (int p = 0; p < arrayListofClusterTemp.get(i).size(); p++) {
+                System.out.print(arrayListofClusterTemp.get(i).get(p) + ", ");
+            }
+            System.out.println("\n total objects: " + arrayListofClusterTemp.get(i).size()); // displays total objects
+            System.out.println();
+            System.out.println("================================");
+        }
+
+        // Calculate total cost of tempClusters
+        int totalCostofCurrentCluster = 0;
+        int totalCostofAllTempClusters = 0;
+        for (int i = 0; i < tempClusterCentroids.size(); i++) {
+            int currentCentroid = tempClusterCentroids.get(i);
+            for (int p = 0; p < arrayListofClusterTemp.get(i).size(); p++) {
+                int currentItem = arrayListofClusterTemp.get(i).get(p);
+                totalCostofCurrentCluster += diff[currentCentroid][currentItem];
+            }
+            totalCostofAllTempClusters += totalCostofCurrentCluster;
+        }
+
+        // total cost of with new centroid
+        System.out.println("Total Cost of Temp Clusters: " + totalCostofAllTempClusters);
+
+        // Subtract new centroidCost from old centroidCost. If positive then old was good.
 
     }
 

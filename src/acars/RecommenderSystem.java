@@ -325,36 +325,34 @@ public class RecommenderSystem {
         }
 
         // Display initial clusters
-        System.out.println("initial clusters:");
+        //System.out.println("initial clusters:");
         //displayClusters();
 
         // Display total number of objects in all clusters
         displayTotalNumOfObjectsInClusters();
 
-        // distanceCalculator(5426, 1894);
-        // distanceCalculator(5837, 385);
-        // distanceCalculator(5837, 2312);
-        // distanceCalculator(5792, 4263);
-        // distanceCalculator(5792, 4990);
-        // distanceCalculator(5792, 4642);
+        //        distanceCalculator(5426, 1894);
+        //        distanceCalculator(5837, 385);
+        //        distanceCalculator(5837, 2312);
+        //        distanceCalculator(5792, 4263);
+        //        distanceCalculator(5792, 4990);
+        //        distanceCalculator(5792, 4642);
 
-        // Iteration of finding new centroids and populating
-        for (int iterator = 0; iterator < 2; iterator++) {
+        // Iterations of finding new centroids and populating
+        for (int iterator = 0; iterator < 5; iterator++) {
             List < List < Integer >> arrayListofClusterTemp = new ArrayList < List < Integer >> (mxuid);
             for (int i = 0; i < mxuid; i++) {
                 arrayListofClusterTemp.add(new ArrayList < Integer > ());
             }
-
             ArrayList < Integer > newClusterCentroids = new ArrayList < Integer > ();
+
             // Find new centroid from the cluster
             for (int i = 0; i < clusterCentroids.size(); i++) {
                 int currentCentroid = clusterCentroids.get(i);
                 double diffSum = 1000000;
                 int newCentroid = 0;
-                //clusterSum += arrayListofCluster.get(currentCentroid).size();
                 for (int j = 0; j < arrayListofCluster.get(i).size(); j++) { // arrayListofCluster.get(currentCentroid).size() = cluster size of current centroid
                     int currentItem = arrayListofCluster.get(i).get(j); // current item of the cluster
-                    //diffSum += diff[currentCentroid][currentItem];
                     double diffSumTemp = 0;
                     for (int k = 0; k < arrayListofCluster.get(i).size(); k++) {
                         int tempItem = arrayListofCluster.get(i).get(k); // next item of the cluster
@@ -367,59 +365,70 @@ public class RecommenderSystem {
                     }
                 }
                 newClusterCentroids.add(newCentroid);
-                //System.out.println(arrayListofCluster.get(currentCentroid).size());
             }
 
-//            // Display new cluster centroids
-//            System.out.println("NEW Centroids of clusters:");
-//            for (int i = 0; i < newClusterCentroids.size(); i++) {
-//                System.out.println((i + 1) + " | " + newClusterCentroids.get(i));
-//            }
+            //            // Display new cluster centroids
+            //            System.out.println("NEW Centroids of clusters:");
+            //            for (int i = 0; i < newClusterCentroids.size(); i++) {
+            //                System.out.println((i + 1) + " | " + newClusterCentroids.get(i));
+            //            }
 
-            // // Convengence condition for ending iteration
-            // boolean newClusterCheck = false;
-            // for (int curr = 0; curr < newClusterCentroids.size(); curr++) {
-            //     if (clusterCentroids.get(curr) != newClusterCentroids.get(curr)) {
-            //         newClusterCheck = true;
-            //     }
-            // }
-            // if (newClusterCheck == false)
-            //     break;
+            // Convengence condition for ending iteration
+            boolean isNewCentroids = false;
+            for (int curr = 0; curr < newClusterCentroids.size(); curr++) {
+                if (clusterCentroids.get(curr) != newClusterCentroids.get(curr)) {
+                    isNewCentroids = true;
+                }
+            }
+            if (isNewCentroids == false)
+                break;
 
             // Updating clusterCentroids arraylist with new newClusterCentroids
             clusterCentroids = newClusterCentroids;
 
-            // // For new centroids: Again populating each cluster with closest objects to its centroid
-            // for (int i = 0; i < mxuid; i++) { // i = current user item
-            //     // Check if item itself is centroid
-            //     boolean isCentroid = false;
-            //     for (int j = 0; j < clusterCentroids.size(); j++) {
-            //         int centroid = clusterCentroids.get(j);
-            //         if (i == centroid) { // If item itself is centroid
-            //             arrayListofCluster.get(centroid).add(i); // Add centroid to its own cluster
-            //             isCentroid = true;
-            //         }
-            //     }
-            //     double tempMax = 1000000;
-            //     int tempCentroid = 0;
-            //     for (int k = 0; k < clusterCentroids.size(); k++) { // Here, clusterCentroids.size() = 61
-            //         int currentCentroid = clusterCentroids.get(k);
-            //         if (isCentroid == false && diff[i][currentCentroid] < tempMax) {
-            //             tempMax = diff[i][currentCentroid]; // tempMax will contain the closest centroid distance from a object
-            //             tempCentroid = currentCentroid; // The closest centroid
-            //         }
-            //     }
-            //     if (tempCentroid != 0)
-            //         arrayListofClusterTemp.get(tempCentroid).add(i);
-            // }
+            // For new centroids: Again populating each cluster with closest objects to its centroid
+            for (int i = 1; i < mxuid; i++) { // i = current item
+                // Check if item itself is centroid
+                // Because sometimes 2 users' diff may be 0.0
+                boolean isNewCentroid = false;
+                for (int j = 0; j < clusterCentroids.size(); j++) {
+                    int centroid = clusterCentroids.get(j);
+                    if (i == centroid) { // If item itself is centroid
+                        arrayListofClusterTemp.get(j).add(i); // Add centroid to its own cluster
+                        isNewCentroid = true;
+                    }
+                }
 
-            //arrayListofCluster = arrayListofClusterTemp;
+                double tempMax = 1000000;
+                int tempCentroid = 0;
+                for (int k = 0; k < clusterCentroids.size(); k++) { // Here, clusterCentroids.size() = 61
+                    int currentCentroid = clusterCentroids.get(k);
+                    if (isNewCentroid == false && diff[i][currentCentroid] < tempMax) {
+                        tempMax = diff[i][currentCentroid]; // tempMax will contain the closest centroid distance from a object
+                        tempCentroid = currentCentroid; // The closest centroid
+                    }
+                }
+
+                int centroidPosition = 0; // centroid position in arraylist
+                for (int m = 0; m < clusterCentroids.size(); m++) { // Here, clusterCentroids.size() = 61
+                    int matchCentroid = clusterCentroids.get(m);
+                    if (matchCentroid == tempCentroid) {
+                        centroidPosition = m;
+                        break;
+                    }
+                }
+
+                if (tempCentroid != 0)
+                    arrayListofClusterTemp.get(centroidPosition).add(i);
+            }
+
+            arrayListofCluster = arrayListofClusterTemp;
             // System.out.println("Current Iteration Number : "+iterator);
         }
 
-        System.out.println("=========================================================================");
-        System.out.println("For new clusters:");
-        System.out.println("=========================================================================");
+        System.out.println("\n=========================================================================");
+        System.out.println("For New Clusters:");
+        System.out.println("=========================================================================\n");
 
         displayClusterCentroids();
 
@@ -427,7 +436,7 @@ public class RecommenderSystem {
         //fillMatrix();
 
         // Display new clusters
-        //displayClusters();
+        displayClusters();
         // System.out.println(cc);
 
         // Display total number of objects in all new clusters

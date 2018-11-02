@@ -320,8 +320,8 @@ public class RecommenderSystem {
                 }
             }
 
-            if (tempCentroid != 0)
-                arrayListofCluster.get(centroidPosition).add(i); /////////////
+            if (tempCentroid != 0)  // keeps away all centroids from getting added again
+                arrayListofCluster.get(centroidPosition).add(i);
         }
 
         // Display initial clusters
@@ -331,12 +331,12 @@ public class RecommenderSystem {
         // Display total number of objects in all clusters
         displayTotalNumOfObjectsInClusters();
 
-        distanceCalculator(5426, 1894);
-        distanceCalculator(5837, 385);
-        distanceCalculator(5837, 2312);
-        distanceCalculator(5792, 4263);
-        distanceCalculator(5792, 4990);
-        distanceCalculator(5792, 4642);
+        // distanceCalculator(5426, 1894);
+        // distanceCalculator(5837, 385);
+        // distanceCalculator(5837, 2312);
+        // distanceCalculator(5792, 4263);
+        // distanceCalculator(5792, 4990);
+        // distanceCalculator(5792, 4642);
     }
 
 

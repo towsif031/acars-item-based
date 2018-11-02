@@ -519,6 +519,51 @@ public class RecommenderSystem {
 
         System.out.println("Total Cost of Initial Cluster: " + totalCostofInitClusters);
 
+        //================
+        // Iteration
+        //================
+
+        // Randomly select a centroid to remove from clusterCentroids array
+        Random randRem = new Random();
+        int randomSelectedCentroidIndex = randRem.nextInt(clusterCentroids.size());
+        int randomSelectedCentroid = clusterCentroids.get(randomSelectedCentroidIndex);
+        System.out.println("Delete centroid: " + randomSelectedCentroid);
+
+        //clusterCentroids = ArrayUtils.removeElement(clusterCentroids, randomSelectedCentroidIndex);
+
+        // New clusterCentroids after removing randomly choosen centroid
+        ArrayList < Integer > tempClusterCentroids = new ArrayList < Integer > ();
+        for (int i = 0; i < clusterCentroids.size(); i++) { // Here, clusterCentroids.size() = 100
+            int currentCentroid = clusterCentroids.get(i);
+            if (currentCentroid != randomSelectedCentroid) {
+                tempClusterCentroids.add(currentCentroid);
+            }
+        }
+
+        // Randomly selected a new unique centroid
+        Random randSel = new Random();
+        int newRandomCentroid = 0;
+        for (int i = 1; i < mxuid; i++) {
+            newRandomCentroid = randSel.nextInt(6040) + 1;
+            for (int j = 0; j < clusterCentroids.size(); j++) {
+                int centroid = clusterCentroids.get(j);
+                if (newRandomCentroid != centroid) {
+                    break;
+                }
+            }
+        }
+
+        System.out.println("New centroid: " + newRandomCentroid);
+
+        // Add new centroid to clusterCentroids
+        tempClusterCentroids.add(newRandomCentroid);
+
+        // Display centroids
+        System.out.println("tempCentroids of clusters:");
+        for (int i = 0; i < tempClusterCentroids.size(); i++) {
+            System.out.println((i + 1) + " , " + tempClusterCentroids.get(i));
+        }
+
     }
 
     // ============================================================ //

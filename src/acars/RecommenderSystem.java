@@ -131,7 +131,6 @@ public class RecommenderSystem {
             itemClusterTest.get(mid).add(uid);
             totalRat++;
         }
-
     }
 
     // The MATRIX to Fill
@@ -145,7 +144,6 @@ public class RecommenderSystem {
                     finalMatrix[currentUser][currentNextUser] += 1;
                     //finalMatrix[currentUser][centroid] += 1;
                 }
-
                 //System.out.print(arrayListofCluster.get(centroid).get(p)+", ");
             }
             System.out.println();
@@ -173,7 +171,7 @@ public class RecommenderSystem {
                 int commonCounter = 0;
                 for (int movieIndex = 0; movieIndex < itemSize; movieIndex++) {
                     int movieId = userList.get(movieIndex);
-                    if (rat[u][movieId] != 0) {
+                    if (rat[v][movieId] != 0) {
                         commonCounter++;
                         diff[u][v] += Math.abs(normalize(rat[u][movieId]) - normalize(rat[v][movieId]));
                     }

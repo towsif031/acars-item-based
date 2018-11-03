@@ -25,7 +25,8 @@ public class ACARS {
         RecommenderSystem rs = new RecommenderSystem(pathPrefix, inputPathPrefix, outputPathPrefix);
         rs.takeTrainData();
         //rs.K_MeansClustering();
-        rs.K_MedoidsClustering();
+        //rs.K_MedoidsClustering();
+        rs.DBSCANClustering();
         //rs.calculateDistance();
     }
     

@@ -682,6 +682,51 @@ public class RecommenderSystem {
     // DBSCAN Clustering
     // ============================================================ //
 
+    void DBSCANClustering() {
+        double eps = 0.05; // minimum epsilon
+        int minPts = 10; // minimum number of points
+        boolean[] flagForVisited = new boolean[mxuid]; // Mark all object as unvisited
+        boolean[] isNoise = new boolean[mxuid];
+
+        Random rand = new Random();
+        int p = rand.nextInt(6040) + 1; // Randomly select an object from 1-6040
+        flagForVisited[p] = true; // Mark p as visited
+
+        calculateDistance();
+
+        ArrayList < Integer > objectNeighbors = new ArrayList < Integer > ();
+        for (int i = 1; i < mxmid; i++) {
+            if (diff[p][i] <= eps) {
+                objectNeighbors.add(i);
+            }
+        }
+
+        ArrayList < Integer > coreObject = new ArrayList < Integer > ();
+        List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
+        for (int j = 0; j < mxuid; j++) {
+            arrayListofClusters.add(new ArrayList < Integer > ());
+        }
+
+        if (objectNeighbors.size() >= minPts) {
+            if (int k = 0; k < objectNeighbors.size(); k++) {
+                int q = objectNeighbors.get(k);
+                flagForVisited[q] = true;
+                arrayListofClusters.get(p).add(q);
+            }
+        } else {
+            isNoise[p] = true;
+            p = rand.nextInt(6040) + 1;
+            while (flagForVisited[p] == true) {
+                p = rand.nextInt(6040) + 1;
+            }
+        }
+
+        System.out.println("objectNeighbors of" + p + " are: ");
+        for (int j = 0; j < objectNeighbors.size(); j++) {
+            System.out.println(" " + objectNeighbors.get(j) + ",");
+        }
+    }
+
     // ============================================================ //
     // Mean Shift Clustering
     // ============================================================ //

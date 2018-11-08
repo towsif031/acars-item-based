@@ -705,29 +705,29 @@ public class RecommenderSystem {
         int clusterPosition = 0;
 
         for (int i = 1; i < mxuid; i++) {
-            int p = rand.nextInt(6040) + 1; // Randomly select an object from 1-6040
-            if (flagForVisited[p] == false) {
-                flagForVisited[p] = true; // Mark p as visited
+            //int p = rand.nextInt(6040) + 1; // Randomly select an object from 1-6040
+            if (flagForVisited[i] == false) {
+                flagForVisited[i] = true; // Mark i as visited
 
                 for (int j = 1; j < mxmid; j++) {
-                    if (diff[p][j] <= eps) {
+                    if (diff[i][j] <= eps) {
                         neighborObjects.add(j);
                     }
                 }
 
                 if (neighborObjects.size() >= minPts) {
 
-                    coreObjects.add(p); // p is a core object
-                    //tempCluster.add(p); // add p to temp cluster
+                    coreObjects.add(i); // i is a core object
+                    //tempCluster.add(i); // add i to temp cluster
 
-                    arrayListofClusters.get(clusterPosition).add(p);
+                    arrayListofClusters.get(clusterPosition).add(i);
 
-                    isInCluster[p] = true;
+                    isInCluster[i] = true;
                     for (int k = 0; k < neighborObjects.size(); k++) {
                         int q = neighborObjects.get(k);
                         if (flagForVisited[q] == false) {
                             flagForVisited[q] = true;
-                            //arrayListofClusters.get(p).add(q);
+                            //arrayListofClusters.get(i).add(q);
                             ArrayList < Integer > neighborObjectsOfq = new ArrayList < Integer > ();
                             for (int l = 1; l < mxmid; l++) {
                                 if (diff[q][l] <= eps) {
@@ -739,28 +739,28 @@ public class RecommenderSystem {
                                 for (int m = 0; m < neighborObjectsOfq.size(); m++) {
                                     neighborObjects.add(m);
                                 }
+                                if (isInCluster[q] == false) {
+                                    //tempCluster.add(q);
+
+                                    // int corePosition = 0; // initializing core position in arraylist
+                                    // for (int n = 0; n < coreObjects.size(); n++) {
+                                    //     int currentCore = coreObjects.get(n);
+                                    //     if (currentCore == i) {
+                                    //         corePosition = n;
+                                    //         break;
+                                    //     }
+                                    // }
+
+                                    // arrayListofClusters.get(corePosition).add(q);
+                                    arrayListofClusters.get(clusterPosition).add(q);
+
+                                }
                             }
-                        }
-                        if (isInCluster[q] == false) {
-                            //tempCluster.add(q);
-
-                            // int corePosition = 0; // initializing core position in arraylist
-                            // for (int n = 0; n < coreObjects.size(); n++) {
-                            //     int currentCore = coreObjects.get(n);
-                            //     if (currentCore == p) {
-                            //         corePosition = n;
-                            //         break;
-                            //     }
-                            // }
-
-                            // arrayListofClusters.get(corePosition).add(q);
-                            arrayListofClusters.get(clusterPosition).add(q);
-
                         }
                     }
 
-                    // // Display neighborObjects of p
-                    // System.out.println("neighborObjects of " + p + " are: ");
+                    // // Display neighborObjects of i
+                    // System.out.println("neighborObjects of " + i + " are: ");
                     // for (int j = 0; j < neighborObjects.size(); j++) {
                     //     System.out.print(" " + neighborObjects.get(j) + ",");
                     // }
@@ -773,7 +773,7 @@ public class RecommenderSystem {
                     // }
 
                 } else {
-                    isNoise[p] = true;
+                    isNoise[i] = true;
                 }
 
                 //arrayListofClusters.add(tempCluster);
@@ -798,61 +798,98 @@ public class RecommenderSystem {
     // Mean Shift Clustering
     // ============================================================ //
     void MeanShiftClustering() {
-        double rad = 0.05; // radius of a centroid
+        double radius = 0.05; // radius
         boolean[] flagForVisited = new boolean[mxuid]; // Mark all object as unvisited
-        //boolean[] isInCluster = new boolean[mxuid];
-        //boolean[] isNoise = new boolean[mxuid];
 
-        Random rand = new Random();
-
-        calculateDistance();
-
-        ArrayList < Integer > centroidPoints = new ArrayList < Integer > ();
-        //ArrayList < Integer > coreObjects = new ArrayList < Integer > ();
+        ArrayList < Integer > coreObjects = new ArrayList < Integer > ();
         List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
-        for (int j = 0; j < mxuid; j++) {
+        for (int i = 0; i < mxuid; i++) {
             arrayListofClusters.add(new ArrayList < Integer > ());
         }
         ArrayList < Integer > tempCluster = new ArrayList < Integer > ();
+        ArrayList < Integer > newTempCluster = new ArrayList < Integer > ();
 
-        int clusterPosition = 0;
+        int newCentroid = 0;
+        int oldCentroid = 0;
 
         for (int i = 1; i < mxuid; i++) {
             if (flagForVisited[i] == false) {
-                flagForVisited[i] = true; // Mark i as visited
-                //centroidPoints.add(i);
-                arrayListofClusters.get(i).add(i);
-                tempCluster.add(i);
+                flagForVisited[i] = true;
 
-                for (int j = i + 1; j < mxmid; j++) {
-                    if (diff[i][j] <= rad) {
+                coreObjects.add(i);
+
+                int coreObjectPosition = 0; // coreObject position in arraylist
+                for (int q = 0; q < coreObjects.size(); q++) {
+                    int matchCoreObject = coreObjects.get(q);
+                    if (matchCoreObject == i) {
+                        coreObjectPosition = q;
+                        break;
+                    }
+                }
+
+                //add i to final cluster
+                arrayListofClusters.get(coreObjectPosition).add(i);
+
+                // initial tempCluster
+                for (int j = 1; j < mxmid; j++) {
+                    if (diff[i][j] <= radius) {
                         tempCluster.add(j);
                     }
                 }
 
-                // finding mean point object
-                int currentCentroid = i;
-                double diffSum = 1000000;
-                int newCentroid = 0;
+                do {
+                    oldCentroid = newCentroid;
+                    //calculate mean object (newCentroid)
+                    double diffSum = 1000000;
 
-                for (int k = 0; k < tempCluster.size(); k++) {
-                    int currentItem = tempCluster.get(k); // current item of the cluster
-                    double diffSumTemp = 0;
-                    for (int l = 0; l < tempCluster.size(); l++) {
-                        int tempItem = tempCluster.get(l); // next item of the cluster
-                        diffSumTemp += diff[currentItem][tempItem];
+                    for (int k = 0; k < tempCluster.size(); k++) {
+                        int currentItem = tempCluster.get(k); // current item of the cluster
+                        double diffSumTemp = 0;
+                        for (int l = 0; l < tempCluster.size(); l++) {
+                            int tempItem = tempCluster.get(l); // next item of the cluster
+                            diffSumTemp += diff[currentItem][tempItem];
+                        }
+
+                        if (diffSumTemp < diffSum) {
+                            diffSum = diffSumTemp; // store smallest diffSumTemp
+                            newCentroid = currentItem; // store the item as new centroid
+                        }
                     }
 
-                    if (diffSumTemp < diffSum) {
-                        diffSum = diffSumTemp; // store smallest diffSumTemp
-                        newCentroid = currentItem; // store the item as new centroid
-                    }
-                }
+                    // if new mean object (centroid) was not visitied before, then add to cluster
+                    if (flagForVisited[newCentroid] == false) {
+                        flagForVisited[newCentroid] = true;
 
-                if (newCentroid != i) {
-                    //centroidPoints.add(newCentroid);
-                    arrayListofClusters.get(i).add(newCentroid);
-                }
+                        //add to final cluster
+                        arrayListofClusters.get(coreObjectPosition).add(newCentroid);
+
+                        //newCentroid = mean object;
+                        //form cluster
+                        for (int m = 1; m < mxmid; m++) {
+                            if (diff[newCentroid][m] <= radius) {
+                                newTempCluster.add(m);
+                            }
+                        }
+
+                        tempCluster = newTempCluster;
+                    } else { // if newCentroid was visited before
+                        //add i to the cluster where the newCentroid is
+                        // searching the cluster of the newCentroid
+                        int clusterPosition = 0; // cluster position in arraylist
+                        for (int n = 0; n < coreObjects.size(); n++) {
+                            for (int p = 0; p < arrayListofClusters.get(n).size(); p++) {
+                                int matchCentroid = arrayListofClusters.get(n).get(p);
+                                if (matchCentroid == newCentroid) {
+                                    clusterPosition = n;
+                                    break;
+                                }
+                            }
+                        }
+
+                        //add to appropriate cluster
+                        arrayListofClusters.get(clusterPosition).add(newCentroid);
+                    }
+                } while (newCentroid != oldCentroid);
             }
         }
     }

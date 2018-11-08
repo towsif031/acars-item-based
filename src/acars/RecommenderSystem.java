@@ -679,10 +679,10 @@ public class RecommenderSystem {
         //fillMatrix();
     }
 
+
     // ============================================================ //
     // DBSCAN Clustering
     // ============================================================ //
-
     void DBSCANClustering() {
         double eps = 0.05; // minimum epsilon
         int minPts = 10; // minimum number of points
@@ -793,7 +793,67 @@ public class RecommenderSystem {
         }
     }
 
+
     // ============================================================ //
     // Mean Shift Clustering
     // ============================================================ //
+    void MeanShiftClustering() {
+        double rad = 0.05; // radius of a centroid
+        boolean[] flagForVisited = new boolean[mxuid]; // Mark all object as unvisited
+        //boolean[] isInCluster = new boolean[mxuid];
+        //boolean[] isNoise = new boolean[mxuid];
+
+        Random rand = new Random();
+
+        calculateDistance();
+
+        ArrayList < Integer > centroidPoints = new ArrayList < Integer > ();
+        //ArrayList < Integer > coreObjects = new ArrayList < Integer > ();
+        List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
+        for (int j = 0; j < mxuid; j++) {
+            arrayListofClusters.add(new ArrayList < Integer > ());
+        }
+        ArrayList < Integer > tempCluster = new ArrayList < Integer > ();
+
+        int clusterPosition = 0;
+
+        for (int i = 1; i < mxuid; i++) {
+            if (flagForVisited[i] == false) {
+                flagForVisited[i] = true; // Mark i as visited
+                //centroidPoints.add(i);
+                arrayListofClusters.get(i).add(i);
+                tempCluster.add(i);
+
+                for (int j = i + 1; j < mxmid; j++) {
+                    if (diff[i][j] <= rad) {
+                        tempCluster.add(j);
+                    }
+                }
+
+                // finding mean point object
+                int currentCentroid = i;
+                double diffSum = 1000000;
+                int newCentroid = 0;
+
+                for (int k = 0; k < tempCluster.size(); k++) {
+                    int currentItem = tempCluster.get(k); // current item of the cluster
+                    double diffSumTemp = 0;
+                    for (int l = 0; l < tempCluster.size(); l++) {
+                        int tempItem = tempCluster.get(l); // next item of the cluster
+                        diffSumTemp += diff[currentItem][tempItem];
+                    }
+
+                    if (diffSumTemp < diffSum) {
+                        diffSum = diffSumTemp; // store smallest diffSumTemp
+                        newCentroid = currentItem; // store the item as new centroid
+                    }
+                }
+
+                if (newCentroid != i) {
+                    //centroidPoints.add(newCentroid);
+                    arrayListofClusters.get(i).add(newCentroid);
+                }
+            }
+        }
+    }
 }

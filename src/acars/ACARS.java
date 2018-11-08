@@ -26,7 +26,8 @@ public class ACARS {
         rs.takeTrainData();
         //rs.K_MeansClustering();
         //rs.K_MedoidsClustering();
-        rs.DBSCANClustering();
+        //rs.DBSCANClustering();
+        rs.MeanShiftClustering();
         //rs.calculateDistance();
     }
     

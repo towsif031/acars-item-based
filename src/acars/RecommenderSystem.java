@@ -700,13 +700,14 @@ public class RecommenderSystem {
         for (int j = 0; j < mxuid; j++) {
             arrayListofClusters.add(new ArrayList < Integer > ());
         }
-        ArrayList < Integer > tempCluster = new ArrayList < Integer > ();
+        //ArrayList < Integer > tempCluster = new ArrayList < Integer > ();
+
+        int clusterPosition = 0;
 
         for (int i = 1; i < mxuid; i++) {
             int p = rand.nextInt(6040) + 1; // Randomly select an object from 1-6040
             if (flagForVisited[p] == false) {
                 flagForVisited[p] = true; // Mark p as visited
-                
 
                 for (int j = 1; j < mxmid; j++) {
                     if (diff[p][j] <= eps) {
@@ -715,8 +716,12 @@ public class RecommenderSystem {
                 }
 
                 if (neighborObjects.size() >= minPts) {
+
                     coreObjects.add(p); // p is a core object
-                    tempCluster.add(p); // add p to temp cluster
+                    //tempCluster.add(p); // add p to temp cluster
+
+                    arrayListofClusters.get(clusterPosition).add(p);
+
                     isInCluster[p] = true;
                     for (int k = 0; k < neighborObjects.size(); k++) {
                         int q = neighborObjects.get(k);
@@ -737,7 +742,20 @@ public class RecommenderSystem {
                             }
                         }
                         if (isInCluster[q] == false) {
-                            tempCluster.add(q);
+                            //tempCluster.add(q);
+
+                            // int corePosition = 0; // initializing core position in arraylist
+                            // for (int n = 0; n < coreObjects.size(); n++) {
+                            //     int currentCore = coreObjects.get(n);
+                            //     if (currentCore == p) {
+                            //         corePosition = n;
+                            //         break;
+                            //     }
+                            // }
+
+                            // arrayListofClusters.get(corePosition).add(q);
+                            arrayListofClusters.get(clusterPosition).add(q);
+
                         }
                     }
 
@@ -747,18 +765,19 @@ public class RecommenderSystem {
                     //     System.out.print(" " + neighborObjects.get(j) + ",");
                     // }
                     // System.out.println("\n neighborObjects size " + neighborObjects.size());
-                    
+
                     // // Display tempCluster
                     // System.out.println("tempCluster: ");
                     // for (int c = 0; c < tempCluster.size(); c++) {
                     //     System.out.print(" " + tempCluster.get(c) + ",");
                     // }
+
                 } else {
                     isNoise[p] = true;
                 }
 
-                arrayListofClusters.add(tempCluster);
-
+                //arrayListofClusters.add(tempCluster);
+                clusterPosition += 1;
             }
         }
 

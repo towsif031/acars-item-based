@@ -892,5 +892,16 @@ public class RecommenderSystem {
                 } while (newCentroid != oldCentroid);
             }
         }
+
+        System.out.println("Clusters after MeanShift:");
+        for (int i = 0; i < coreObjects.size(); i++) {
+            System.out.println((i + 1) + " | Core point : " + coreObjects.get(i));
+            for (int j = 0; j < arrayListofClusters.get(i).size(); j++) {
+                System.out.print(arrayListofClusters.get(i).get(j) + ", ");
+            }
+            System.out.println("\n total objects: " + arrayListofClusters.get(i).size()); // displays total objects
+            System.out.println();
+            System.out.println("================================");
+        }
     }
 }

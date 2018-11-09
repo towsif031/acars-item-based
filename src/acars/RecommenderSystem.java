@@ -839,7 +839,7 @@ public class RecommenderSystem {
 
                 do {
                     oldCentroid = newCentroid;
-                    //calculate mean object (newCentroid)
+                    //  find mean object (newCentroid)
                     double diffSum = 1000000;
 
                     for (int k = 0; k < tempCluster.size(); k++) {
@@ -863,7 +863,6 @@ public class RecommenderSystem {
                         //add to final cluster
                         arrayListofClusters.get(coreObjectPosition).add(newCentroid);
 
-                        //newCentroid = mean object;
                         //form cluster
                         for (int m = 1; m < mxmid; m++) {
                             if (diff[newCentroid][m] <= radius) {
@@ -872,22 +871,48 @@ public class RecommenderSystem {
                         }
 
                         tempCluster = newTempCluster;
-                    } else { // if newCentroid was visited before
-                        //add i to the cluster where the newCentroid is
-                        // searching the cluster of the newCentroid
-                        int clusterPosition = 0; // cluster position in arraylist
-                        for (int n = 0; n < coreObjects.size(); n++) {
-                            for (int p = 0; p < arrayListofClusters.get(n).size(); p++) {
-                                int matchCentroid = arrayListofClusters.get(n).get(p);
-                                if (matchCentroid == newCentroid) {
-                                    clusterPosition = n;
-                                    break;
+                    } else { // if newCentroid is a previously visited centroid
+
+                        // searching the coreObject position of the oldCentroid
+                        int coreObjectPositionOfOldCentroid = 0; // cluster position in arraylist
+
+                        loopForOldCentroid:
+                            for (int n = 0; n < coreObjects.size(); n++) {
+                                for (int p = 0; p < arrayListofClusters.get(n).size(); p++) {
+                                    int matchCentroid = arrayListofClusters.get(n).get(p);
+                                    if (matchCentroid == oldCentroid) {
+                                        coreObjectPositionOfOldCentroid = n;
+                                        break loopForOldCentroid;
+                                    }
                                 }
                             }
+
+                        // deleting coreObject of the previously visited centroid from coreObject arraylist
+                        coreObjects.remove(coreObjectPositionOfOldCentroid);
+
+                        // searching the coreObject position of the newCentroid (previously visited centroid)
+                        int coreObjectPositionOfVisitedCentroid = 0;
+
+                        loopForNewCentroid:
+                            for (int n = 0; n < coreObjects.size(); n++) {
+                                for (int p = 0; p < arrayListofClusters.get(n).size(); p++) {
+                                    int matchCentroid = arrayListofClusters.get(n).get(p);
+                                    if (matchCentroid == newCentroid) {
+                                        coreObjectPositionOfVisitedCentroid = n;
+                                        break loopForNewCentroid;
+                                    }
+                                }
+                            }
+
+                        // adding all objects of the old cluster to the appropriate cluster
+                        for (int r = 0; r < arrayListofClusters.get(coreObjectPositionOfOldCentroid).size(); r++) {
+                            int s = arrayListofClusters.get(coreObjectPositionOfOldCentroid).get(r);
+                            arrayListofClusters.get(coreObjectPositionOfVisitedCentroid).add(s);
+
                         }
 
-                        //add to appropriate cluster
-                        arrayListofClusters.get(clusterPosition).add(newCentroid);
+                        // deleting the cluster of oldCentroid (old cluster)
+                        arrayListofClusters.remove(coreObjectPositionOfOldCentroid);
                     }
                 } while (newCentroid != oldCentroid);
             }

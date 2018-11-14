@@ -708,15 +708,13 @@ public class RecommenderSystem {
         ArrayList < Integer > neighborObjects = new ArrayList < Integer > (); // candidate set N
         ArrayList < Integer > coreObjects = new ArrayList < Integer > ();
         List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
-        for (int j = 0; j < mxuid; j++) {
+        for (int a = 0; a < mxuid; a++) {
             arrayListofClusters.add(new ArrayList < Integer > ());
         }
-        //ArrayList < Integer > tempCluster = new ArrayList < Integer > ();
 
         int clusterPosition = 0;
 
         for (int i = 1; i < mxuid; i++) {
-            //int p = rand.nextInt(6040) + 1; // Randomly select an object from 1-6040
             if (flagForVisited[i] == false) {
                 flagForVisited[i] = true; // Mark i as visited
 
@@ -727,81 +725,64 @@ public class RecommenderSystem {
                 }
 
                 if (neighborObjects.size() >= minPts) {
-
                     coreObjects.add(i); // i is a core object
-                    //tempCluster.add(i); // add i to temp cluster
-
                     arrayListofClusters.get(clusterPosition).add(i);
 
                     isInCluster[i] = true;
                     for (int k = 0; k < neighborObjects.size(); k++) {
-                        int q = neighborObjects.get(k);
-                        if (flagForVisited[q] == false) {
-                            flagForVisited[q] = true;
-                            //arrayListofClusters.get(i).add(q);
-                            ArrayList < Integer > neighborObjectsOfq = new ArrayList < Integer > ();
+                        int p = neighborObjects.get(k);
+                        if (flagForVisited[p] == false) {
+                            flagForVisited[p] = true;
+                            //arrayListofClusters.get(i).add(p);
+                            ArrayList < Integer > neighborObjectsOfp = new ArrayList < Integer > ();
                             for (int l = 1; l < mxmid; l++) {
-                                if (diff[q][l] <= eps) {
-                                    neighborObjectsOfq.add(l);
+                                if (diff[p][l] <= eps) {
+                                    neighborObjectsOfp.add(l);
                                 }
                             }
-                            // add neighborhood points of q to neighborObjects
-                            if (neighborObjectsOfq.size() >= minPts) {
-                                for (int m = 0; m < neighborObjectsOfq.size(); m++) {
-                                    neighborObjects.add(m);
-                                }
-                                if (isInCluster[q] == false) {
-                                    //tempCluster.add(q);
 
-                                    // int corePosition = 0; // initializing core position in arraylist
-                                    // for (int n = 0; n < coreObjects.size(); n++) {
-                                    //     int currentCore = coreObjects.get(n);
-                                    //     if (currentCore == i) {
-                                    //         corePosition = n;
-                                    //         break;
-                                    //     }
-                                    // }
-
-                                    // arrayListofClusters.get(corePosition).add(q);
-                                    arrayListofClusters.get(clusterPosition).add(q);
-
+                            // add neighborhood points of p to neighborObjects
+                            if (neighborObjectsOfp.size() >= minPts) {
+                                for (int m = 0; m < neighborObjectsOfp.size(); m++) {
+                                    int n = neighborObjectsOfp.get(m);
+                                    neighborObjects.add(n); ////// may add duplicates
                                 }
                             }
                         }
+
+                        if (isInCluster[p] == false) {
+                            isInCluster[p] = true;
+                            arrayListofClusters.get(clusterPosition).add(p);
+                        }
                     }
 
-                    // // Display neighborObjects of i
-                    // System.out.println("neighborObjects of " + i + " are: ");
-                    // for (int j = 0; j < neighborObjects.size(); j++) {
-                    //     System.out.print(" " + neighborObjects.get(j) + ",");
-                    // }
-                    // System.out.println("\n neighborObjects size " + neighborObjects.size());
-
-                    // // Display tempCluster
-                    // System.out.println("tempCluster: ");
-                    // for (int c = 0; c < tempCluster.size(); c++) {
-                    //     System.out.print(" " + tempCluster.get(c) + ",");
-                    // }
-
+                    clusterPosition++;
                 } else {
                     isNoise[i] = true;
                 }
-
-                //arrayListofClusters.add(tempCluster);
-                clusterPosition += 1;
             }
         }
 
+        // Display clusters
         System.out.println("Clusters:");
         for (int i = 0; i < coreObjects.size(); i++) {
-            System.out.println((i + 1) + " | Core point : " + coreObjects.get(i));
+            System.out.println((i + 1) + " | Core object : " + coreObjects.get(i));
             for (int j = 0; j < arrayListofClusters.get(i).size(); j++) {
                 System.out.print(arrayListofClusters.get(i).get(j) + ", ");
             }
-            System.out.println("\n total objects: " + arrayListofClusters.get(i).size()); // displays total objects
+            System.out.println("\n total objects in the cluster: " + arrayListofClusters.get(i).size());
             System.out.println();
             System.out.println("================================");
         }
+
+        // Display total objects in clusters
+        int totalObjectInClusters = 0;
+        for (int i = 0; i < coreObjects.size(); i++) {
+            totalObjectInClusters += arrayListofClusters.get(i).size();
+            System.out.println((i + 1) + " , " + arrayListofClusters.get(i).size());
+        }
+        System.out.println("Total number of Objects in all clusters: ");
+        System.out.println(totalObjectInClusters);
     }
 
 
@@ -811,6 +792,8 @@ public class RecommenderSystem {
     void MeanShiftClustering() {
         double radius = 0.05; // radius
         boolean[] flagForVisited = new boolean[mxuid]; // Mark all object as unvisited
+
+        calculateDistance();
 
         ArrayList < Integer > coreObjects = new ArrayList < Integer > ();
         List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);

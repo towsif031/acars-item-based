@@ -488,7 +488,7 @@ public class RecommenderSystem {
 
             double tempMax = 1000000;
             int tempCentroid = 0;
-            for (int k = 0; k < clusterCentroids.size(); k++) { // Here, clusterCentroids.size() = 61
+            for (int k = 0; k < clusterCentroids.size(); k++) { // Here, clusterCentroids.size() = 100
                 int currentCentroid = clusterCentroids.get(k);
                 if (isCentroid == false && diff[i][currentCentroid] < tempMax) {
                     tempMax = diff[i][currentCentroid]; // tempMax will contain the closest centroid distance from a object
@@ -497,7 +497,7 @@ public class RecommenderSystem {
             }
 
             int centroidPosition = 0; // centroid position in arraylist
-            for (int m = 0; m < clusterCentroids.size(); m++) { // Here, clusterCentroids.size() = 61
+            for (int m = 0; m < clusterCentroids.size(); m++) { // Here, clusterCentroids.size() = 100
                 int matchCentroid = clusterCentroids.get(m);
                 if (matchCentroid == tempCentroid) {
                     centroidPosition = m;
@@ -556,15 +556,26 @@ public class RecommenderSystem {
             // Randomly selected a new unique centroid
             Random randSel = new Random();
             int newRandomCentroid = 0;
-            for (int i = 1; i < mxuid; i++) {
+            boolean isUnique = false;
+            while (!isUnique) {
                 newRandomCentroid = randSel.nextInt(6040) + 1;
-                for (int j = 0; j < clusterCentroids.size(); j++) {
-                    int centroid = clusterCentroids.get(j);
-                    if (newRandomCentroid != centroid) {
-                        break;
-                    }
+                if (!clusterCentroids.contains(newRandomCentroid)) {
+                    isUnique = true;
                 }
             }
+
+            // // Randomly selected a new unique centroid
+            // Random randSel = new Random();
+            // int newRandomCentroid = 0;
+            // for (int i = 1; i < mxuid; i++) {
+            //     newRandomCentroid = randSel.nextInt(6040) + 1;
+            //     for (int j = 0; j < clusterCentroids.size(); j++) {
+            //         int centroid = clusterCentroids.get(j);
+            //         if (newRandomCentroid != centroid) {
+            //             break;
+            //         }
+            //     }
+            // }
 
             System.out.println("New centroid: " + newRandomCentroid);
 

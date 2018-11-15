@@ -923,4 +923,118 @@ public class RecommenderSystem {
             System.out.println("================================");
         }
     }
+
+
+    // ============================================================ //
+    // Divisive Clustering
+    // ============================================================ //
+    void DivisiveClustering() {
+
+        List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
+        for (int i = 0; i < mxuid; i++) {
+            arrayListofClusters.add(new ArrayList < Integer > ());
+        }
+
+        List < List < Integer >> arrayListofTempClusters = new ArrayList < List < Integer >> (mxuid);
+        for (int i = 0; i < mxuid; i++) {
+            arrayListofTempClusters.add(new ArrayList < Integer > ());
+        }
+
+        ArrayList < Integer > tempClusterX = new ArrayList < Integer > ();
+        ArrayList < Integer > tempClusterY = new ArrayList < Integer > ();
+
+        // finding 2 most furthest users in the cluster
+        double maxDistance = 0;
+        double distance = 0;
+        int x = 0;
+        int y = 0;
+        for (int i = 1; i < mxuid; i++) {
+            for (int j = i + 1; j < mxuid; j++) {
+                distance = diff[i][j];
+                if (distance > maxDistance) {
+                    maxDistance = distance;
+                    x = i;
+                    y = j;
+                }
+            }
+        }
+
+        arrayListofTempClusters.get(x).add(x);
+        arrayListofTempClusters.get(y).add(y);
+
+        for (int i = 1; i < mxuid; i++) {
+            if (diff[i][x] <= diff[i][y]) {
+                arrayListofTempClusters.get(x).add(i);
+            } else {
+                arrayListofTempClusters.get(y).add(i);
+            }
+        }
+
+        for (int iterator = 1; iterator < 59; iterator++) { // to get 61 clusters
+            int clusterToDiv = 0; // the cluster where we found the 2 most furthest users. So we can devide that
+
+            for (int i = 0; i < arrayListofTempClusters.size(); i++) { // finding in all clusters
+                // finding 2 most furthest users in current cluster
+                for (int j = 0; j < arrayListofTempClusters.get(i).size(); j++) {
+                    int m = arrayListofTempClusters.get(i).get(j);
+                    for (int k = j + 1; k < arrayListofTempClusters.get(i).size(); j++) {
+                        int n = arrayListofTempClusters.get(i).get(k);
+                        maxDistance = 0;
+                        distance = diff[m][n];
+                        if (distance > maxDistance) {
+                            maxDistance = distance;
+                            x = m;
+                            y = n;
+                            clusterToDiv = i;
+                        }
+                    }
+                }
+            }
+
+            tempClusterX.add(x);
+            tempClusterY.add(y);
+
+            for (int i = 0; i < arrayListofTempClusters.get(clusterToDiv).size(); i++) {
+                int o = arrayListofTempClusters.get(clusterToDiv).get(i);
+                if (diff[o][x] <= diff[o][y]) {
+                    tempClusterX.add(o);
+                } else {
+                    tempClusterY.add(o);
+                }
+            }
+
+            // empty the arraylist where x and y was.
+            arrayListofTempClusters.get(clusterToDiv).clear();
+
+            // adding to own clusters
+            arrayListofTempClusters.get(x).addAll(tempClusterX);
+            arrayListofTempClusters.get(y).addAll(tempClusterY);
+
+            // empty tempClusters
+            tempClusterX.clear();
+            tempClusterY.clear();
+        }
+
+        // Add all clusters to arrayListofClusters()
+        int j = 0;
+        for (int i = 0; i < arrayListofTempClusters.size(); i++) {
+            if (arrayListofTempClusters.get(i).size() > 0) {
+                arrayListofClusters.get(j).addAll(arrayListofTempClusters.get(i));
+                j++;
+                // empty the arraylist where x and y was.
+                arrayListofTempClusters.get(i).clear();
+            }
+        }
+
+        // Display clusters
+        System.out.println("Clusters after Divisive:");
+        for (int i = 0; i < arrayListofClusters.size(); i++) {
+            for (j = 0; j < arrayListofClusters.get(i).size(); j++) {
+                System.out.print(arrayListofClusters.get(i).get(j) + ", ");
+            }
+            System.out.println("\n total objects: " + arrayListofClusters.get(i).size()); // displays total objects
+            System.out.println();
+            System.out.println("================================");
+        }
+    }
 }

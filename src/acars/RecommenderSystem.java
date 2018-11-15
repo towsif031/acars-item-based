@@ -1046,7 +1046,6 @@ public class RecommenderSystem {
     // Single-linkage clustering //
     //---------------------------//
     void SingleLinkageClustering() {
-
         List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
         for (int i = 0; i < mxuid; i++) {
             arrayListofClusters.add(new ArrayList < Integer > ());
@@ -1062,6 +1061,10 @@ public class RecommenderSystem {
             arrayListofTempClusters.get(i).add(i);
         }
 
+        double minDistance = 0;
+        double distance = 0;
+        int x = 0;
+        int y = 0;
         int clusterPositionX = 0;
         int clusterPositionY = 0;
 
@@ -1074,7 +1077,6 @@ public class RecommenderSystem {
                     for (int p = i + 1; p < arrayListofTempClusters.size(); p++) {
                         for (int q = 0; q < arrayListofTempClusters.get(p).size(); q++) {
                             int n = arrayListofTempClusters.get(p).get(q);
-                            minDistance = 10;
                             distance = diff[m][n];
                             if (distance < minDistance) {
                                 minDistance = distance;
@@ -1091,7 +1093,7 @@ public class RecommenderSystem {
             // merging clusterPositionY in clusterPositionX
             arrayListofTempClusters.get(clusterPositionX).addAll(arrayListofTempClusters.get(clusterPositionY));
 
-            // making clusterPositionY empty
+            // empty the cluster at clusterPositionY
             arrayListofTempClusters.get(clusterPositionY).clear();
 
             // to get desired number of clusters
@@ -1117,7 +1119,7 @@ public class RecommenderSystem {
         }
 
         // Display clusters
-        System.out.println("Clusters after Agglomerative (Single-linkage clustering):");
+        System.out.println("Clusters after Single-linkage clustering:");
         for (int i = 0; i < arrayListofClusters.size(); i++) {
             for (j = 0; j < arrayListofClusters.get(i).size(); j++) {
                 System.out.print(arrayListofClusters.get(i).get(j) + ", ");

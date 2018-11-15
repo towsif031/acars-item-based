@@ -979,7 +979,6 @@ public class RecommenderSystem {
                     int m = arrayListofTempClusters.get(i).get(j);
                     for (int k = j + 1; k < arrayListofTempClusters.get(i).size(); j++) {
                         int n = arrayListofTempClusters.get(i).get(k);
-                        maxDistance = 0;
                         distance = diff[m][n];
                         if (distance > maxDistance) {
                             maxDistance = distance;

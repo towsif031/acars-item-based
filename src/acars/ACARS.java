@@ -28,7 +28,8 @@ public class ACARS {
         //rs.K_MedoidsClustering();
         //rs.DBSCANClustering();
         //rs.MeanShiftClustering();
-        rs.DivisiveClustering();
+        //rs.DivisiveClustering();
+        rs.SingleLinkageClustering();
         //rs.calculateDistance();
     }
     

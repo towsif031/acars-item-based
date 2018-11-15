@@ -1037,4 +1037,94 @@ public class RecommenderSystem {
             System.out.println("================================");
         }
     }
+
+
+    // ============================================================ //
+    // Agglomerative Clustering
+    // ============================================================ //
+    //---------------------------//
+    // Single-linkage clustering //
+    //---------------------------//
+    void SingleLinkageClustering() {
+
+        List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
+        for (int i = 0; i < mxuid; i++) {
+            arrayListofClusters.add(new ArrayList < Integer > ());
+        }
+
+        List < List < Integer >> arrayListofTempClusters = new ArrayList < List < Integer >> (mxuid);
+        for (int i = 0; i < mxuid; i++) {
+            arrayListofTempClusters.add(new ArrayList < Integer > ());
+        }
+
+        // Initially creating separate clusters for each user
+        for (int i = 1; i < mxuid; i++) {
+            arrayListofTempClusters.get(i).add(i);
+        }
+
+        int clusterPositionX = 0;
+        int clusterPositionY = 0;
+
+        int iterator = 10000000;
+        while (iterator > 61) { // to get 61 clusters
+            // finding 2 most nearest users of 2 different clusters
+            for (int i = 0; i < arrayListofTempClusters.size(); i++) {
+                for (int j = 0; j < arrayListofTempClusters.get(i).size(); j++) {
+                    int m = arrayListofTempClusters.get(i).get(j);
+                    for (int p = i + 1; p < arrayListofTempClusters.size(); p++) {
+                        for (int q = 0; q < arrayListofTempClusters.get(p).size(); q++) {
+                            int n = arrayListofTempClusters.get(p).get(q);
+                            minDistance = 10;
+                            distance = diff[m][n];
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                x = m;
+                                y = n;
+                                clusterPositionX = i;
+                                clusterPositionY = p;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // merging clusterPositionY in clusterPositionX
+            arrayListofTempClusters.get(clusterPositionX).addAll(arrayListofTempClusters.get(clusterPositionY));
+
+            // making clusterPositionY empty
+            arrayListofTempClusters.get(clusterPositionY).clear();
+
+            // to get desired number of clusters
+            int clusterCounter = 0;
+            for (int i = 0; i < arrayListofTempClusters.size(); i++) {
+                if (arrayListofTempClusters.get(i).size() > 0) {
+                    clusterCounter++ ;
+                }
+            }
+
+            iterator = clusterCounter;
+        }
+
+        // Add all clusters to arrayListofClusters()
+        int j = 0;
+        for (int i = 0; i < arrayListofTempClusters.size(); i++) {
+            if (arrayListofTempClusters.get(i).size() > 0) {
+                arrayListofClusters.get(j).addAll(arrayListofTempClusters.get(i));
+                j++;
+                // empty the arraylist where x and y was.
+                arrayListofTempClusters.get(i).clear();
+            }
+        }
+
+        // Display clusters
+        System.out.println("Clusters after Agglomerative (Single-linkage clustering):");
+        for (int i = 0; i < arrayListofClusters.size(); i++) {
+            for (j = 0; j < arrayListofClusters.get(i).size(); j++) {
+                System.out.print(arrayListofClusters.get(i).get(j) + ", ");
+            }
+            System.out.println("\n total objects: " + arrayListofClusters.get(i).size()); // displays total objects
+            System.out.println();
+            System.out.println("================================");
+        }
+    }
 }

@@ -970,7 +970,7 @@ public class RecommenderSystem {
             }
         }
 
-        for (int iterator = 1; iterator < 59; iterator++) { // to get 61 clusters
+        for (int iterator = 1; iterator < 60; iterator++) { // to get 61 clusters    // 60
             int clusterToDiv = 0; // the cluster where we found the 2 most furthest users. So we can devide that
 
             for (int i = 0; i < arrayListofTempClusters.size(); i++) { // finding in all clusters
@@ -1099,7 +1099,7 @@ public class RecommenderSystem {
             int clusterCounter = 0;
             for (int i = 0; i < arrayListofTempClusters.size(); i++) {
                 if (arrayListofTempClusters.get(i).size() > 0) {
-                    clusterCounter++ ;
+                    clusterCounter++;
                 }
             }
 
@@ -1119,6 +1119,111 @@ public class RecommenderSystem {
 
         // Display clusters
         System.out.println("Clusters after Single-linkage clustering:");
+        for (int i = 0; i < arrayListofClusters.size(); i++) {
+            for (j = 0; j < arrayListofClusters.get(i).size(); j++) {
+                System.out.print(arrayListofClusters.get(i).get(j) + ", ");
+            }
+            System.out.println("\n total objects: " + arrayListofClusters.get(i).size()); // displays total objects
+            System.out.println();
+            System.out.println("================================");
+        }
+    }
+
+
+    //---------------------------//
+    // Complete-linkage clustering //
+    //---------------------------//
+    void CompleteLinkageClustering() {
+        List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
+        for (int i = 0; i < mxuid; i++) {
+            arrayListofClusters.add(new ArrayList < Integer > ());
+        }
+
+        List < List < Integer >> arrayListofTempClusters = new ArrayList < List < Integer >> (mxuid);
+        for (int i = 0; i < mxuid; i++) {
+            arrayListofTempClusters.add(new ArrayList < Integer > ());
+        }
+
+        // Initially creating separate clusters for each user
+        for (int i = 1; i < mxuid; i++) {
+            arrayListofTempClusters.get(i).add(i);
+        }
+
+        double maxDistance = 0;
+        double distance = 0;
+        double minOfMax = 10;
+        int tempX = 0;
+        int tempY = 0;
+        int x = 0;
+        int y = 0;
+        int tempClusterPositionX = 0;
+        int tempClusterPositionY = 0;
+        int clusterPositionX = 0;
+        int clusterPositionY = 0;
+
+        int iterator = 10000000;
+        while (iterator > 61) { // to get 61 clusters
+            // finding 2 most nearest users of 2 different clusters
+            for (int i = 0; i < arrayListofTempClusters.size(); i++) {
+                for (int j = 0; j < arrayListofTempClusters.get(i).size(); j++) {
+                    int m = arrayListofTempClusters.get(i).get(j);
+                    for (int p = i + 1; p < arrayListofTempClusters.size(); p++) {
+                        for (int q = 0; q < arrayListofTempClusters.get(p).size(); q++) {
+                            int n = arrayListofTempClusters.get(p).get(q);
+                            distance = diff[m][n];
+                            if (distance > maxDistance) {
+                                maxDistance = distance;
+                                tempX = m;
+                                tempY = n;
+                                tempClusterPositionX = i;
+                                tempClusterPositionY = p;
+                            }
+                        }
+
+                        if (maxDistance < minOfMax) {
+                            minOfMax = maxDistance; // fow which?. done but not sure yet
+
+                            x = tempX;
+                            y = tempY;
+                            clusterPositionX = tempClusterPositionX;
+                            clusterPositionY = tempClusterPositionY;
+                        }
+
+                        maxDistance = 0;
+                    }
+                }
+            }
+
+            // merging clusterPositionY in clusterPositionX
+            arrayListofTempClusters.get(clusterPositionX).addAll(arrayListofTempClusters.get(clusterPositionY));
+
+            // empty the cluster at clusterPositionY
+            arrayListofTempClusters.get(clusterPositionY).clear();
+
+            // to get desired number of clusters
+            int clusterCounter = 0;
+            for (int i = 0; i < arrayListofTempClusters.size(); i++) {
+                if (arrayListofTempClusters.get(i).size() > 0) {
+                    clusterCounter++;
+                }
+            }
+
+            iterator = clusterCounter;
+        }
+
+        // Add all clusters to arrayListofClusters()
+        int j = 0;
+        for (int i = 0; i < arrayListofTempClusters.size(); i++) {
+            if (arrayListofTempClusters.get(i).size() > 0) {
+                arrayListofClusters.get(j).addAll(arrayListofTempClusters.get(i));
+                j++;
+                // empty the arraylist where x and y was.
+                arrayListofTempClusters.get(i).clear();
+            }
+        }
+
+        // Display clusters
+        System.out.println("Clusters after Complete-linkage clustering:");
         for (int i = 0; i < arrayListofClusters.size(); i++) {
             for (j = 0; j < arrayListofClusters.get(i).size(); j++) {
                 System.out.print(arrayListofClusters.get(i).get(j) + ", ");

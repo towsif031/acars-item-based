@@ -718,7 +718,7 @@ public class RecommenderSystem {
             if (flagForVisited[i] == false) {
                 flagForVisited[i] = true; // Mark i as visited
 
-                for (int j = 1; j < mxmid; j++) {
+                for (int j = 1; j < mxuid; j++) {
                     if (diff[i][j] <= eps) {
                         neighborObjects.add(j);
                     }
@@ -735,7 +735,7 @@ public class RecommenderSystem {
                             flagForVisited[p] = true;
                             //arrayListofClusters.get(i).add(p);
                             ArrayList < Integer > neighborObjectsOfp = new ArrayList < Integer > ();
-                            for (int l = 1; l < mxmid; l++) {
+                            for (int l = 1; l < mxuid; l++) {
                                 if (diff[p][l] <= eps) {
                                     neighborObjectsOfp.add(l);
                                 }
@@ -825,7 +825,7 @@ public class RecommenderSystem {
                 arrayListofClusters.get(coreObjectPosition).add(i);
 
                 // initial tempCluster
-                for (int j = 1; j < mxmid; j++) {
+                for (int j = 1; j < mxuid; j++) {
                     if (diff[i][j] <= radius) {
                         tempCluster.add(j);
                     }
@@ -857,14 +857,20 @@ public class RecommenderSystem {
                         //add to final cluster
                         arrayListofClusters.get(coreObjectPosition).add(newCentroid);
 
+                        ////// for debugging purpose
+                        System.out.println("newCentroid / new mean: " + newCentroid);
+
                         //form cluster
-                        for (int m = 1; m < mxmid; m++) {
+                        for (int m = 1; m < mxuid; m++) {
                             if (diff[newCentroid][m] <= radius) {
                                 newTempCluster.add(m);
                             }
                         }
 
                         tempCluster = newTempCluster;
+
+                        // empty newTempCluster
+                        newTempCluster.clear();
                     } else { // if newCentroid is a previously visited centroid
 
                         // searching the coreObject position of the oldCentroid
@@ -909,6 +915,9 @@ public class RecommenderSystem {
                         arrayListofClusters.remove(coreObjectPositionOfOldCentroid);
                     }
                 } while (newCentroid != oldCentroid);
+
+                // empty tempCluster
+                tempCluster.clear();
             }
         }
 
@@ -943,13 +952,15 @@ public class RecommenderSystem {
         ArrayList < Integer > tempClusterX = new ArrayList < Integer > ();
         ArrayList < Integer > tempClusterY = new ArrayList < Integer > ();
 
+        calculateDistance();
+
         // finding 2 most furthest users in the cluster
         double maxDistance = 0;
         double distance = 0;
         int x = 0;
         int y = 0;
         for (int i = 1; i < mxuid; i++) {
-            for (int j = i + 1; j < mxuid; j++) {
+            for (int j = 1; j < mxuid; j++) {
                 distance = diff[i][j];
                 if (distance > maxDistance) {
                     maxDistance = distance;
@@ -958,6 +969,9 @@ public class RecommenderSystem {
                 }
             }
         }
+
+        ////// for debugging purpose
+        System.out.println("2 most furthest users are: " + x + " and " + y);
 
         arrayListofTempClusters.get(x).add(x);
         arrayListofTempClusters.get(y).add(y);
@@ -970,6 +984,18 @@ public class RecommenderSystem {
             }
         }
 
+        ////// for debugging purpose
+        // Display tempClusters
+        System.out.println("Clusters after first div:");
+        for (int i = 0; i < arrayListofTempClusters.size(); i++) {
+            for (int j = 0; j < arrayListofTempClusters.get(i).size(); j++) {
+                System.out.print(arrayListofTempClusters.get(i).get(j) + ", ");
+            }
+            System.out.println("\n total objects: " + arrayListofTempClusters.get(i).size()); // displays total objects
+            System.out.println();
+            System.out.println("================================");
+        }
+
         for (int iterator = 1; iterator < 60; iterator++) { // to get 61 clusters    // 60
             int clusterToDiv = 0; // the cluster where we found the 2 most furthest users. So we can devide that
 
@@ -977,7 +1003,7 @@ public class RecommenderSystem {
                 // finding 2 most furthest users in current cluster
                 for (int j = 0; j < arrayListofTempClusters.get(i).size(); j++) {
                     int m = arrayListofTempClusters.get(i).get(j);
-                    for (int k = j + 1; k < arrayListofTempClusters.get(i).size(); j++) {
+                    for (int k = 0; k < arrayListofTempClusters.get(i).size(); j++) {
                         int n = arrayListofTempClusters.get(i).get(k);
                         distance = diff[m][n];
                         if (distance > maxDistance) {
@@ -993,6 +1019,9 @@ public class RecommenderSystem {
             tempClusterX.add(x);
             tempClusterY.add(y);
 
+            ////// for debugging purpose
+            System.out.println("tempClusterX, tempClusterY formed.");
+
             for (int i = 0; i < arrayListofTempClusters.get(clusterToDiv).size(); i++) {
                 int o = arrayListofTempClusters.get(clusterToDiv).get(i);
                 if (diff[o][x] <= diff[o][y]) {
@@ -1002,8 +1031,14 @@ public class RecommenderSystem {
                 }
             }
 
+            ////// for debugging purpose
+            System.out.println("tempClusterX, tempClusterY completed.");
+
             // empty the arraylist where x and y was.
             arrayListofTempClusters.get(clusterToDiv).clear();
+
+            ////// for debugging purpose
+            System.out.println("empty parent for avoiding duplicate");
 
             // adding to own clusters
             arrayListofTempClusters.get(x).addAll(tempClusterX);
@@ -1012,6 +1047,21 @@ public class RecommenderSystem {
             // empty tempClusters
             tempClusterX.clear();
             tempClusterY.clear();
+
+            ////// for debugging purpose
+            System.out.println("empty tempClusterX, tempClusterY");
+
+            ////// for debugging purpose
+            // Display tempClusters after iteration
+            System.out.println("Clusters after iteration " + iterator + ":");
+            for (int i = 0; i < arrayListofTempClusters.size(); i++) {
+                for (int j = 0; j < arrayListofTempClusters.get(i).size(); j++) {
+                    System.out.print(arrayListofTempClusters.get(i).get(j) + ", ");
+                }
+                System.out.println("\n total objects: " + arrayListofTempClusters.get(i).size()); // displays total objects
+                System.out.println();
+                System.out.println("================================");
+            }
         }
 
         // Add all clusters to arrayListofClusters()
@@ -1059,6 +1109,8 @@ public class RecommenderSystem {
         for (int i = 1; i < mxuid; i++) {
             arrayListofTempClusters.get(i).add(i);
         }
+
+        calculateDistance();
 
         double minDistance = 0;
         double distance = 0;
@@ -1148,6 +1200,8 @@ public class RecommenderSystem {
         for (int i = 1; i < mxuid; i++) {
             arrayListofTempClusters.get(i).add(i);
         }
+
+        calculateDistance();
 
         double maxDistance = 0;
         double distance = 0;

@@ -24,10 +24,11 @@ public class ACARS {
         String prefix = outputPathPrefix;
         RecommenderSystem rs = new RecommenderSystem(pathPrefix, inputPathPrefix, outputPathPrefix);
         rs.takeTrainData();
+        rs.calculateDistance();
         //rs.K_MeansClustering();
         //rs.K_MedoidsClustering();
         //rs.DBSCANClustering();
-        rs.MeanShiftClustering();
+        //rs.MeanShiftClustering();
         //rs.DivisiveClustering();
         //rs.SingleLinkageClustering();
         //rs.CompleteLinkageClustering();

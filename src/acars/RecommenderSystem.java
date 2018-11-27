@@ -168,26 +168,25 @@ public class RecommenderSystem {
     void calculateDistance() {
         for (int u = 1; u < mxuid; u++) {
             for (int v = 1; v < mxuid; v++) {
-                int w = v - 1;
-                List < Integer > userList = userCluster.get(w);
+                List < Integer > userList = userCluster.get(u); ////// there is no user id 1. so it miscalculates diff[1][1] = 1
                 int itemSize = userList.size();
                 int commonCounter = 0;
                 for (int movieIndex = 0; movieIndex < itemSize; movieIndex++) {
                     int movieId = userList.get(movieIndex);
                     if (rat[v][movieId] != 0) {
                         commonCounter++;
+                        //  System.out.println("movieId: "+ movieId); // common movie they both watched
                         diff[u][v] += Math.abs(normalize(rat[u][movieId]) - normalize(rat[v][movieId]));
                     }
                 }
                 if (commonCounter != 0) {
-                    diff[u][v] /= commonCounter;
+                    diff[u][v] = diff[u][v] / commonCounter;
                 } else {
                     diff[u][v] = 1;
                 }
+
+                  System.out.println("Diff of " + u + " & " + v + " = " + diff[u][v]);
             }
-            //for (int v = 1; v < mxuid; v++){
-            //    System.out.println(diff[u][v]);
-            //}
         }
     }
 
@@ -299,7 +298,7 @@ public class RecommenderSystem {
         clusterCentroids = new ArrayList < Integer > ();
         // Choosing 1 centroid from every 100 objects orderly.
         clusterCentroids = randomInRange(clusterCentroids);
-        calculateDistance();
+        
 
         // Display randomly choosen centroids (K = 61)
         displayClusterCentroids();
@@ -468,7 +467,7 @@ public class RecommenderSystem {
 
         // Find 100 random centroids (K) within dataset
         clusterCentroids = uniqueRandomInRange(clusterCentroids);
-        calculateDistance();
+        
 
         // Display initial K-Medoids centroids
         displayClusterCentroids();
@@ -703,7 +702,7 @@ public class RecommenderSystem {
 
         Random rand = new Random();
 
-        calculateDistance();
+        
 
         ArrayList < Integer > neighborObjects = new ArrayList < Integer > (); // candidate set N
         ArrayList < Integer > coreObjects = new ArrayList < Integer > ();
@@ -793,7 +792,7 @@ public class RecommenderSystem {
         double radius = 0.05; // radius
         boolean[] flagForVisited = new boolean[mxuid]; // Mark all object as unvisited
 
-        calculateDistance();
+        
 
         ArrayList < Integer > coreObjects = new ArrayList < Integer > ();
         List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
@@ -952,7 +951,7 @@ public class RecommenderSystem {
         ArrayList < Integer > tempClusterX = new ArrayList < Integer > ();
         ArrayList < Integer > tempClusterY = new ArrayList < Integer > ();
 
-        calculateDistance();
+        
 
         // finding 2 most furthest users in the cluster
         double maxDistance = 0;
@@ -1110,7 +1109,7 @@ public class RecommenderSystem {
             arrayListofTempClusters.get(i).add(i);
         }
 
-        calculateDistance();
+        
 
         double minDistance = 0;
         double distance = 0;
@@ -1201,7 +1200,7 @@ public class RecommenderSystem {
             arrayListofTempClusters.get(i).add(i);
         }
 
-        calculateDistance();
+        
 
         double maxDistance = 0;
         double distance = 0;

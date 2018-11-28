@@ -25,11 +25,14 @@ public class ACARS {
         RecommenderSystem rs = new RecommenderSystem(pathPrefix, inputPathPrefix, outputPathPrefix);
         rs.takeTrainData();
         rs.calculateDistance();
+
+        ////rs.missingUid();
+        
         //rs.K_MeansClustering();
         //rs.K_MedoidsClustering();
         //rs.DBSCANClustering();
         //rs.MeanShiftClustering();
-        //rs.DivisiveClustering();
+        rs.DivisiveClustering();
         //rs.SingleLinkageClustering();
         //rs.CompleteLinkageClustering();
         //rs.calculateDistance();

@@ -29,11 +29,11 @@ public class ACARS {
         ////rs.missingUid();
 
         //rs.K_MeansClustering();
-        //rs.K_MedoidsClustering();
+        rs.K_MedoidsClustering();
         //rs.DBSCANClustering();
         //rs.MeanShiftClustering();
         //rs.DivisiveClustering();
-        rs.SingleLinkageClustering();
+        //rs.SingleLinkageClustering();
         //rs.CompleteLinkageClustering();
     }
     

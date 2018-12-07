@@ -428,7 +428,9 @@ public class RecommenderSystem {
     }
 
     // Distance Calculator
-    void calculateDistance() {
+    void calculateDistance() throws FileNotFoundException, IOException {
+        PrintWriter out = new PrintWriter(new FileWriter(outputPathPrefix + "userDiffs.csv"));
+
         for (int u = 2; u < mxuid; u++) { // as there is no uid 1. so we start from uid 2 for simplicity
             for (int v = 2; v < mxuid; v++) {
                 //if (userCluster.get(u).size() != 0 && userCluster.get(v).size() != 0) {
@@ -449,9 +451,30 @@ public class RecommenderSystem {
                     diff[u][v] = 1;
                 }
 
+                // save in file
+                out.println(u + "," + v + "," + diff[u][v]);
+                out.flush();
+
                 System.out.println("Diff of " + u + " & " + v + " = " + diff[u][v]);
                 //}
             }
+        }
+
+        out.close();
+    }
+
+    // read calculated distances from file
+    void readCalculatedDistance() throws FileNotFoundException, IOException {
+        BufferedReader in = new BufferedReader(new FileReader(inputPathPrefix + "userDiffs.csv"));
+        String text;
+        String[] cut;
+        int u = 0, v = 0;
+        while ((text = in .readLine()) != null) {
+            cut = text.split(",");
+            u = Integer.parseInt(cut[0]);
+            v = Integer.parseInt(cut[1]);
+            diff[u][v] = Double.parseDouble(cut[2]);
+            System.out.println("Distance between " + u + " and " + v + " is " + diff[u][v]);
         }
     }
 

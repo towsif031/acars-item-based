@@ -28,13 +28,17 @@ public class ACARS {
 
         ////rs.missingUid();
 
-        //rs.K_MeansClustering();
-        rs.K_MedoidsClustering();
-        //rs.DBSCANClustering();
-        //rs.MeanShiftClustering();
-        //rs.DivisiveClustering();
-        //rs.SingleLinkageClustering();
-        //rs.CompleteLinkageClustering();
+        rs.K_MeansClustering();
+        ////rs.K_MedoidsClustering();
+        rs.DBSCANClustering();
+        ////rs.MeanShiftClustering();
+        rs.DivisiveClustering();
+        rs.SingleLinkageClustering();
+        ////rs.CompleteLinkageClustering();
+
+        ////rs.displayMatrix();
+        ////rs.fillMatrixRandom();
+        rs.calculateAMAE();
     }
-    
+
 }

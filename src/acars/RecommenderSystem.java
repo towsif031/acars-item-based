@@ -23,17 +23,15 @@ import java.util.TreeMap;
  * @author TOWSIF AHMED
  */
 public class RecommenderSystem {
+
     int mxmid = 3953;
     int mxuid = 6041;
 
-    List < List < Integer >> userCluster = new ArrayList < List < Integer >> (mxuid);
-    List < List < Integer >> userClusterTest = new ArrayList < List < Integer >> (mxuid);
-    List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
+    List< List< Integer>> userCluster = new ArrayList< List< Integer>>(mxuid);
+    List< List< Integer>> userClusterTest = new ArrayList< List< Integer>>(mxuid);
+    List< List< Integer>> arrayListofClusters = new ArrayList< List< Integer>>(mxuid);
 
-    List < List < Integer >> itemCluster = new ArrayList < List < Integer >> (mxuid);
-    List < List < Integer >> itemClusterTest = new ArrayList < List < Integer >> (mxuid);
-
-    Map < String, Integer > m = new TreeMap < String, Integer > ();
+    Map< String, Integer> m = new TreeMap< String, Integer>();
 
     boolean[][] flag = new boolean[mxmid + 1][mxmid];
 
@@ -43,17 +41,20 @@ public class RecommenderSystem {
     double[][] predRat = new double[mxuid][mxmid];
 
     double[][] diff = new double[mxuid][mxuid];
+    double[][] matrix = new double[mxuid][mxuid];
     double[][] finalMatrix = new double[mxuid][mxuid];
 
-    double[] itemSum = new double[mxmid];
-    double[] itemAvg = new double[mxmid];
-    boolean[] itemFlag = new boolean[mxmid];
+    double[] userSum = new double[mxuid + 1];
+    double[] userAvg = new double[mxuid + 1];
+
+    boolean[] userFlag = new boolean[mxuid];
     int totalRat = 0;
     boolean litmus = false;
     String inputPathPrefix, outputPathPrefix, prefix;
-    ArrayList < Integer > clusterCentroids;
+    ArrayList< Integer> clusterCentroids;
     Double[] curr = new Double[mxmid];
 
+    ArrayIndexComparator comparator;
     Integer[] indexes;
 
     RecommenderSystem(String prefix, String inPrefix, String outPrefix) {
@@ -64,20 +65,16 @@ public class RecommenderSystem {
     }
 
     void init() {
-        for (int i = 0; i < mxmid; i++) {
-            itemCluster.add(new ArrayList < Integer > ());
+
+        for (int i = 0; i < mxuid; i++) {
+            userCluster.add(new ArrayList< Integer>());
         }
         for (int i = 0; i < mxuid; i++) {
-            userCluster.add(new ArrayList < Integer > ());
+            userClusterTest.add(new ArrayList< Integer>());
         }
+
         for (int i = 0; i < mxuid; i++) {
-            userClusterTest.add(new ArrayList < Integer > ());
-        }
-        for (int i = 0; i < mxmid; i++) {
-            itemClusterTest.add(new ArrayList < Integer > ());
-        }
-        for (int i = 0; i < mxuid; i++) {
-            arrayListofClusters.add(new ArrayList < Integer > ());
+            arrayListofClusters.add(new ArrayList< Integer>());
         }
     }
 
@@ -87,7 +84,7 @@ public class RecommenderSystem {
         String text;
         String[] cut;
         int uid = 0, mid = 0, r = 0, t = 0;
-        while ((text = in .readLine()) != null) {
+        while ((text = in.readLine()) != null) {
 
             cut = text.split(",");
             // System.out.println(text);
@@ -98,56 +95,322 @@ public class RecommenderSystem {
             // System.out.println(uid+" + "+ mid +" + "+ r +" + "+t);
             rat[uid][mid] = r;
 
-            itemCluster.get(mid).add(uid);
             userCluster.get(uid).add(mid);
             // itemCluster.get(mid).add(uid);
-            itemSum[mid] += r;
+            userSum[mid] += r;
         }
-
         /*Calculate the average of all user*/
         int sz = 0;
-        for (int i = 1; i < mxmid; i++) {
-            int j = i - 1;
-            sz = itemCluster.get(j).size();
+        for (int i = 1; i < mxuid; i++) {
+            sz = userCluster.get(i).size();
             if (sz != 0) {
-                itemAvg[j] = (itemSum[j] / sz);
+                userAvg[i] = (userSum[i] / sz);
+
             } else {
-                itemAvg[j] = 0;
+                userAvg[i] = 0;
             }
-            // System.out.println(usrAvg[i]);
+            // out.println(usrAvg[i]);
         }
 
         // Reading the test.csv file
         in = new BufferedReader(new FileReader(inputPathPrefix + "test.csv"));
 
-        while ((text = in .readLine()) != null) {
+        while ((text = in.readLine()) != null) {
             cut = text.split(",");
 
             uid = Integer.parseInt(cut[0]);
             mid = Integer.parseInt(cut[1]);
             r = Integer.parseInt(cut[2]);
             t = Integer.parseInt(cut[3]);
-            // System.out.println(uid+" + "+ mid +" + "+ r +" + "+t);
+            //System.out.println(uid+" + "+ mid +" + "+ r +" + "+t);
             Rat[uid][mid] = r;
-            itemClusterTest.get(mid).add(uid);
+            userClusterTest.get(uid).add(mid);
             totalRat++;
         }
     }
 
-    // The MATRIX to Fill
-    void fillMatrix() {
-        for (int i = 0; i < clusterCentroids.size(); i++) {
-            int centroid = clusterCentroids.get(i);
-            for (int p = 0; p < arrayListofClusters.get(centroid).size(); p++) {
-                int currentUser = arrayListofClusters.get(centroid).get(p);
-                for (int q = 0; q < arrayListofClusters.get(centroid).size(); q++) {
-                    int currentNextUser = arrayListofClusters.get(centroid).get(q);
-                    finalMatrix[currentUser][currentNextUser] += 1;
-                    //finalMatrix[currentUser][centroid] += 1;
-                }
-                //System.out.print(arrayListofClusters.get(centroid).get(p)+", ");
+    // // The MATRIX to Fill
+    // void fillMatrixRandom() {
+    //     Random r = new Random();
+    //     for (int currentUser = 1; currentUser < mxuid; currentUser++) {
+    //         for (int currentNextUser = 1; currentNextUser < mxuid; currentNextUser++) {
+    //             int Low = 0;
+    //             int High = 7;
+    //             int result = r.nextInt(High - Low) + Low;
+    //             finalMatrix[currentUser][currentNextUser] = result;
+    //             //finalMatrix[currentUser][centroid] += 1;
+
+    //            // System.out.println(finalMatrix[currentUser][currentNextUser]);
+    //         }
+    //         // System.out.println();
+    //     }
+    // }
+
+    double normalizedRatingBestNeighbor(int u, int m, int neighbour) {
+        double S = 0, T = 0;
+
+        if (userFlag[u] == false) {
+            userFlag[u] = true;
+            curr = new Double[mxuid];
+            curr[0] = -1.0;
+            for (int i = 1; i < mxuid; i++) {
+
+                curr[i] = (-1.0) * matrix[u][i];
             }
-            System.out.println();
+            comparator = new ArrayIndexComparator(curr);
+            indexes = comparator.createIndexArray();
+            Arrays.sort(indexes, comparator);
+        }
+
+        int closeCounter = 0;
+
+        for (int i = 0; i < neighbour; i++) {
+
+            if (rat[indexes[i]][m] != 0 && indexes[i] != u) {
+                closeCounter++;
+//                if (itemItemScore[m][indexes[i]] != 0) {
+//                    S += itemItemScore[m][indexes[i]] * (rat[u][indexes[i]] - itemAvg[indexes[i]]);
+//                    T += itemItemScore[m][indexes[i]];
+//                } else {
+//                    S += itemItemScore[indexes[i]][m] * (rat[u][indexes[i]] - itemAvg[indexes[i]]);
+//                    T += itemItemScore[indexes[i]][m];
+//                }
+                if (matrix[u][indexes[i]] != 0) {
+                    S += matrix[u][indexes[i]] * (rat[indexes[i]][m] - userAvg[indexes[i]]);
+                    T += matrix[u][indexes[i]];
+                }
+            }
+//            if (rat[u][indexes[i]] != 0 && indexes[i] != m) {
+//                closeCounter++;
+//                if (itemItemScore[m][indexes[i]] != 0) {
+//                    S += itemItemScore[m][indexes[i]] * (rat[u][indexes[i]] - itemAvg[indexes[i]]) * relevanceScore[m][indexes[i]];
+//                    T += itemItemScore[m][indexes[i]] * relevanceScore[m][indexes[i]];
+//                } else {
+//                    S += itemItemScore[indexes[i]][m] * (rat[u][indexes[i]] - itemAvg[indexes[i]]) * relevanceScore[m][indexes[i]];
+//                    T += itemItemScore[indexes[i]][m] * relevanceScore[m][indexes[i]];
+//                }
+//            }
+            if (closeCounter > neighbour) {
+                break;
+            }
+        }
+
+        if (T == 0) {
+            return -1;
+        }
+        double avgRat = S / T;
+
+        if ((avgRat + userAvg[u]) < 0) {
+            return 1;
+        }
+        if (avgRat + userAvg[u] > 5) {
+            return 5;
+        }
+        return avgRat + userAvg[u];
+    }
+
+    void calculateAMAE() throws FileNotFoundException, IOException {
+        PrintWriter out2 = new PrintWriter(new FileWriter(outputPathPrefix + "ResultData.csv"));
+        PrintWriter out3 = new PrintWriter(new FileWriter(outputPathPrefix + "calculatedARHR.csv"));
+
+        int neighbor = 400;
+        int friend = 0;
+        double precisionUp = 0, precisionLow = 0, precision = 0, coverage = 0, coverageUp = 0, coverageLow = 0;
+        double recallUp = 0, recallLow = 0, recall = 0;
+        double arhrUp = 0, arhrLow = 0, arhr = 0;
+        for (friend = 20; friend <= neighbor; friend += 10) {
+            userFlag = new boolean[mxuid + 1];
+            // double globalErrorSum = 0;
+            //System.out.println("for : "+friend );
+            precisionUp = 0;
+            precisionLow = 0;
+            precision = 0;
+            recallUp = 0;
+            recallLow = 0;
+            recall = 0;
+            coverageUp = 0;
+            coverageLow = 0;
+            coverage = 0;
+            arhrUp = 0;
+            arhrLow = 0;
+            double globalRoundingErrorSum = 0;
+            for (int user = 1; user < mxuid; user++) {
+                List<Integer> itemsList = userClusterTest.get(user);
+                Integer oneUserItemsSize = itemsList.size();
+                for (Integer index = 0; index < oneUserItemsSize; index++) {
+                    int items = itemsList.get(index);
+                    coverageLow++;
+                    // double predictedRating = normalizedRating(users, items, friend);
+                    double predictedRating = 0;
+
+                    int predictedRounding = 0;
+                    predictedRating = normalizedRatingBestNeighbor(user, items, friend);
+                   // System.out.println(Rat[user][items] + " , " + predictedRating);
+
+                   // globalRoundingErrorSum += Math.abs(Rat[user][items] - predictedRating);
+                    /*
+                    if (litmus == false) {
+                        predictedRating = normalizedRatingBestNeighbor(user, items, friend);
+                        predictedRounding = (int) predictedRating;
+                        if ((predictedRating - predictedRounding) >= 0.5) {
+                            predictedRounding++;
+                        }
+                        predictedRating = predictedRounding;
+                        predRat[user][items] = predictedRating;
+                    } else {
+                        predictedRating = normalizedRatingBestNeighborGeneralized(user, items, friend);
+//                        predictedRounding = (int) predictedRating;
+//                        if ((predictedRating - predictedRounding) >= 0.5) {
+//                            predictedRounding++;
+//                        }
+                        // predictedRating = predictedRounding;
+                        predRat[user][items] = predictedRating;
+                    }
+                    
+                     */
+
+                    // globalErrorSum += Math.abs(Rat[users][item] - predictedRating);
+                    if (predictedRating != -1) {
+                        coverageUp++;
+
+                        // TP
+                        if (Rat[user][items] > 2 && predictedRating > 2) {
+                            precisionUp++;
+                            precisionLow++;
+                            recallUp++;
+                            recallLow++;
+                        }
+                        // FP
+                        if (Rat[user][items] < 3 && predictedRating > 2) {
+                            precisionLow++;
+                        }
+                        // FN
+                        if (Rat[user][items] > 2 && predictedRating < 3) {
+                            recallLow++;
+                        }
+
+                        //System.out.println(Rat[users][items] + "   " + predictedRating);
+                        //out2.println(Rat[users][items] + "   " + predictedRounding);
+                        globalRoundingErrorSum += Math.abs(Rat[user][items] - predictedRating);
+                    }
+
+                }
+            }
+            // double AMAE = globalErrorSum / totalRat;
+            double AMAE2 = globalRoundingErrorSum / totalRat;
+            precision = precisionUp / precisionLow;
+            recall = recallUp / recallLow;
+            coverage = coverageUp / coverageLow;
+            double f2measures = (2 * precision * recall) / (precision + recall);
+            //out.println("AMAE is without rounding  : " + AMAE);
+            out2.println(friend + "," + AMAE2 + "," + precision + "," + recall + "," + f2measures + "," + coverage);
+            out2.println();
+            out2.println();
+            System.out.println(friend + "," + AMAE2 + "," + precision + "," + recall + "," + f2measures + "," + coverage);
+            //out.flush();
+            //out.close();
+            out2.flush();
+        }
+
+        /*
+        Double[] rr;
+        for (int topK = 2; topK <= 20; topK++) {
+
+            for (int items = 1; items <= mxmid; items++) {
+                List<Integer> usersList = itemClusterTest.get(items);
+                Integer oneItemUsersSize = usersList.size();
+
+                //sort start
+                rr = new Double[oneItemUsersSize];
+                //curr[0] = -1.0;
+                for (Integer in = 0; in < oneItemUsersSize; in++) {
+                    int us = usersList.get(in);
+
+                    rr[in] = (-1.0) * Rat[us][items];
+
+                }
+                comparator = new ArrayIndexComparator(rr);
+                indexes = comparator.createIndexArray();
+                Arrays.sort(indexes, comparator);
+
+                //sort end
+                for (Integer index = 0, top = 0; index < oneItemUsersSize && top < topK; index++, top++) {
+                    int users = usersList.get(index);
+
+                    int ii = indexes[top];
+
+                    if (Rat[users][ii] == 5 && predRat[users][ii] == 5) {
+                        arhrUp += 1 / (double) (top + 1);
+                    }
+//                        else if (Rat[users][ii] == 5 && predRat[users][ii] == 4) {
+//                            arhrUp += (1 / (double)(top+1));
+//                        } 
+//                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 5) {
+//                            arhrUp += (1 / (double)(top+1));
+//                        }
+//                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 4) {
+//                            arhrUp += 1 / (double)(top+1);
+//                        } 
+//                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 4) {
+//                            arhrUp += (1);
+//                        } 
+                    //else if (Rat[users][ii] == 4 && predRat[users][ii] == 3) {
+//                            arhrUp += (1 / 3);
+//                        }
+
+                }
+                arhr += arhrUp / topK;
+                //out3.prinln(topK+",");
+            }
+            arhr = arhr / mxmid;
+            System.out.println(topK + "," + arhr);
+            out3.println(topK + "," + arhr);
+            arhr = 0;
+        }
+        
+         */
+        out2.close();
+        out3.flush();
+        out3.close();
+
+    }
+
+    // initial matrix
+    void initFillMatrix() {
+        for (int i = 2; i < mxuid; i++) {
+            for (int j = 2; j < mxuid; j++) {
+                matrix[i][j] = 0;
+            }
+        }
+    }
+
+    // The MATRIX to fill after every clustering
+    void fillMatrix() {
+        for (int p = 0; p < arrayListofClusters.size(); p++) {
+            for (int q = 0; q < arrayListofClusters.get(p).size(); q++) {
+                int m = arrayListofClusters.get(p).get(q);
+                for (int r = 0; r < arrayListofClusters.get(p).size(); r++) {
+                    int n = arrayListofClusters.get(p).get(r);
+                    matrix[m][n] += 1;
+                }
+            }
+        }
+    }
+
+    // display the MATRIX
+    void displayMatrix() {
+        System.out.println();
+        System.out.println("display matrix...");
+        for (int i = 2; i < mxuid; i++) {
+            for (int j = 2; j < mxuid; j++) {
+                //System.out.println("i = " + i + ", j = " + j);
+                if (matrix[i][j] > 0) {
+                    System.out.println("matrix[" + i + "][" + j + "] = " + matrix[i][j]);
+                }
+                // else {
+                //     System.out.println("All 0");
+                // }
+            }
         }
     }
 
@@ -169,7 +432,7 @@ public class RecommenderSystem {
         for (int u = 2; u < mxuid; u++) { // as there is no uid 1. so we start from uid 2 for simplicity
             for (int v = 2; v < mxuid; v++) {
                 //if (userCluster.get(u).size() != 0 && userCluster.get(v).size() != 0) {
-                List < Integer > userList = userCluster.get(u);
+                List< Integer> userList = userCluster.get(u);
                 int itemSize = userList.size();
                 int commonCounter = 0;
                 for (int movieIndex = 0; movieIndex < itemSize; movieIndex++) {
@@ -200,14 +463,13 @@ public class RecommenderSystem {
     //         }
     //     }
     // }
-
     // Display distance between 2 user objects
     void distanceCalculator(int u, int v) {
         System.out.println("Distance between " + u + " and " + v + " is " + diff[u][v]);
     }
 
     // Choose random 1 centroid from every 100 objects orderly. 6040 users So, K = 61
-    ArrayList < Integer > randomInRange(ArrayList < Integer > clusterCentroids) {
+    ArrayList< Integer> randomInRange(ArrayList< Integer> clusterCentroids) {
         Random r = new Random();
         for (int userId = 1; userId + 100 < mxuid; userId = userId + 100) {
             int Low = userId;
@@ -225,7 +487,7 @@ public class RecommenderSystem {
     }
 
     // Choose K unique centroids randomly from the dataset. Here K = 61
-    ArrayList < Integer > uniqueRandomInRange(ArrayList < Integer > clusterCentroids) {
+    ArrayList< Integer> uniqueRandomInRange(ArrayList< Integer> clusterCentroids) {
         int numofCluster = 61;
         Random rand = new Random();
         while (numofCluster > 0) {
@@ -301,7 +563,6 @@ public class RecommenderSystem {
         System.out.println(totalObjectInClusters);
     }
 
-
     // ============================================================ //
     // K-Means Clustering
     // ============================================================ //
@@ -369,7 +630,7 @@ public class RecommenderSystem {
         // distanceCalculator(5792, 4642);
 
         // Iterations of finding new centroids and populating
-        for (int iterator = 0; iterator < 5; iterator++) {
+        for (int iterator = 0; iterator < 50; iterator++) {
             List < List < Integer >> arrayListofTempClusters = new ArrayList < List < Integer >> (mxuid);
             for (int i = 0; i < mxuid; i++) {
                 arrayListofTempClusters.add(new ArrayList < Integer > ());
@@ -406,8 +667,8 @@ public class RecommenderSystem {
 
             // Convengence condition for ending iteration
             boolean isNewCentroids = false;
-            for (int curr = 0; curr < newClusterCentroids.size(); curr++) {
-                if (clusterCentroids.get(curr) != newClusterCentroids.get(curr)) {
+            for (int i = 0; i < newClusterCentroids.size(); i++) {
+                if (clusterCentroids.get(i) != newClusterCentroids.get(i)) {
                     isNewCentroids = true;
                 }
             }
@@ -473,7 +734,8 @@ public class RecommenderSystem {
         displayTotalNumOfObjectsInClusters();
 
         // Filling the MATRIX after K-Means
-        //fillMatrix();
+        fillMatrix();
+        displayMatrix();
     }
 
 
@@ -485,6 +747,10 @@ public class RecommenderSystem {
 
         // Find 61 random centroids (K) within dataset
         clusterCentroids = uniqueRandomInRange(clusterCentroids);
+        List < List < Integer >> arrayListofTempClusters = new ArrayList < List < Integer >> (mxuid);
+        for (int i = 0; i < mxuid; i++) {
+            arrayListofTempClusters.add(new ArrayList < Integer > ());
+        }
 
         // Display initial K-Medoids centroids
         displayClusterCentroids();
@@ -615,14 +881,17 @@ public class RecommenderSystem {
             for (int i = 0; i < tempClusterCentroids.size(); i++) {
                 System.out.println((i + 1) + "| " + tempClusterCentroids.get(i));
             }
-            
+
             // empty old main clusters
             arrayListofClusters.clear();
 
-            List < List < Integer >> arrayListofTempClusters = new ArrayList < List < Integer >> (mxuid);
-            for (int i = 0; i < mxuid; i++) {
-                arrayListofTempClusters.add(new ArrayList < Integer > ());
-            }
+            // empty old main clusters
+            //arrayListofTempClusters.clear();
+
+//            List < List < Integer >> arrayListofTempClusters = new ArrayList < List < Integer >> (mxuid);
+//            for (int i = 0; i < mxuid; i++) {
+//                arrayListofTempClusters.add(new ArrayList < Integer > ());
+//            }
             //  Populate each cluster with closest objects to its centroid
             for (int i = 2; i < mxuid; i++) { // i = current item
                 // Check if item itself is centroid
@@ -694,9 +963,9 @@ public class RecommenderSystem {
             double s = newCost - oldCost;
             if (s < 0) {
                 //newClusterCentroids = tempClusterCentroids;
-                clusterCentroids = tempClusterCentroids;
+                clusterCentroids.addAll(tempClusterCentroids);
                 //arrayListofNewClusters = arrayListofTempClusters;
-                arrayListofClusters = arrayListofTempClusters;
+                arrayListofClusters.addAll(arrayListofTempClusters);
                 oldCost = newCost;
             }
 
@@ -708,10 +977,10 @@ public class RecommenderSystem {
 
             // // add all temp centroids as main centroids
             // clusterCentroids = tempClusterCentroids;
-            
-            // // empty old main clusters
-            // arrayListofClusters.clear();
-            
+
+//             // empty old main clusters
+//             arrayListofClusters.clear();
+
             // // copy all temp clusters to main clusters
             // arrayListofClusters = arrayListofTempClusters;
 
@@ -733,6 +1002,17 @@ public class RecommenderSystem {
 
         // Filling the MATRIX after K-Medoids
         //fillMatrix();
+        System.out.println("K-Medoids:");
+        for (int p = 0; p < arrayListofTempClusters.size(); p++) {
+            for (int q = 0; q < arrayListofTempClusters.get(p).size(); q++) {
+                int m = arrayListofTempClusters.get(p).get(q);
+                for (int r = 0; r < arrayListofTempClusters.get(p).size(); r++) {
+                    int n = arrayListofTempClusters.get(p).get(r);
+                    matrix[m][n] += 1;
+                }
+            }
+        }
+        displayMatrix();
     }
 
 
@@ -830,6 +1110,19 @@ public class RecommenderSystem {
         }
         System.out.println("Total number of Objects in all clusters: ");
         System.out.println(totalObjectInClusters);
+
+        // Filling the MATRIX after DBSCAN
+        //fillMatrix();
+        for (int p = 0; p < arrayListofClusters.size(); p++) {
+            for (int q = 0; q < arrayListofClusters.get(p).size(); q++) {
+                int m = arrayListofClusters.get(p).get(q);
+                for (int r = 0; r < arrayListofClusters.get(p).size(); r++) {
+                    int n = arrayListofClusters.get(p).get(r);
+                    matrix[m][n] += 1;
+                }
+            }
+        }
+        displayMatrix();
     }
 
 
@@ -841,7 +1134,7 @@ public class RecommenderSystem {
     // DBSCAN Clustering
     // ============================================================ //
     void DBSCANClustering() {
-        double eps = 0.001; // minimum epsilon
+        double eps = 0.02; // minimum epsilon
         int minPts = 10; // minimum number of points
         boolean[] flagForVisited = new boolean[mxuid]; // Mark all object as unvisited
         boolean[] isInCluster = new boolean[mxuid];
@@ -947,6 +1240,20 @@ public class RecommenderSystem {
             }
         }
         System.out.println("\n total clusters: " + totalClusters);
+
+        // Filling the MATRIX after DBSCAN
+        System.out.println("DBSCAN:");
+        //fillMatrix();
+        for (int p = 0; p < arrayListofClusters.size(); p++) {
+            for (int q = 0; q < arrayListofClusters.get(p).size(); q++) {
+                int m = arrayListofClusters.get(p).get(q);
+                for (int r = 0; r < arrayListofClusters.get(p).size(); r++) {
+                    int n = arrayListofClusters.get(p).get(r);
+                    matrix[m][n] += 1;
+                }
+            }
+        }
+        displayMatrix();
     }
 
 
@@ -1095,6 +1402,10 @@ public class RecommenderSystem {
             System.out.println();
             System.out.println("================================");
         }
+
+        // Filling the MATRIX after MeanShift
+        fillMatrix();
+        displayMatrix();
     }
 
 
@@ -1146,8 +1457,11 @@ public class RecommenderSystem {
         ////// for debugging purpose
         // Display tempClusters
         System.out.println("Clusters after first div:");
+        int initClusterCounter = 1;
         for (int i = 0; i < arrayListofTempClusters.size(); i++) {
             if (arrayListofTempClusters.get(i).size() > 0) {
+                System.out.println("Cluster #" + initClusterCounter);
+                initClusterCounter++;
                 for (int j = 0; j < arrayListofTempClusters.get(i).size(); j++) {
                     System.out.print(arrayListofTempClusters.get(i).get(j) + ", ");
                 }
@@ -1217,9 +1531,12 @@ public class RecommenderSystem {
 
             ////// for debugging purpose
             // Display tempClusters after iteration
-            System.out.println("Clusters after iteration " + iterator + ":");
+            System.out.println("Clusters after iteration #" + iterator + " :");
+            int tempClusterCounter = 1;
             for (int i = 0; i < arrayListofTempClusters.size(); i++) {
                 if (arrayListofTempClusters.get(i).size() > 0) {
+                    System.out.println("Cluster #" + tempClusterCounter);
+                    tempClusterCounter++;
                     for (int j = 0; j < arrayListofTempClusters.get(i).size(); j++) {
                         System.out.print(arrayListofTempClusters.get(i).get(j) + ", ");
                     }
@@ -1230,29 +1547,45 @@ public class RecommenderSystem {
             }
         }
 
-        // Add all clusters to arrayListofClusters()
-        int j = 0;
-        for (int i = 0; i < arrayListofTempClusters.size(); i++) {
-            if (arrayListofTempClusters.get(i).size() > 0) {
-                arrayListofClusters.get(j).addAll(arrayListofTempClusters.get(i));
-                j++;
-                // empty the arraylist where x and y was.
-                arrayListofTempClusters.get(i).clear();
-            }
-        }
+        // // Add all clusters to arrayListofClusters()
+        // int j = 0;
+        // for (int i = 0; i < arrayListofTempClusters.size(); i++) {
+        //     if (arrayListofTempClusters.get(i).size() > 0) {
+        //         arrayListofClusters.get(j).addAll(arrayListofTempClusters.get(i));
+        //         j++;
+        //         // empty the arraylist where x and y was.
+        //         arrayListofTempClusters.get(i).clear();
+        //     }
+        // }
 
-        // Display clusters
-        System.out.println("Clusters after Divisive:");
-        for (int i = 0; i < arrayListofClusters.size(); i++) {
-            if (arrayListofClusters.get(i).size() > 0) {
-                for (j = 0; j < arrayListofClusters.get(i).size(); j++) {
-                    System.out.print(arrayListofClusters.get(i).get(j) + ", ");
+        // // Display clusters
+        // System.out.println("Clusters after Divisive:");
+        // int clusterCounter = 1;
+        // for (int i = 0; i < arrayListofClusters.size(); i++) {
+        //     if (arrayListofClusters.get(i).size() > 0) {
+        //         System.out.println("Cluster #" + clusterCounter);
+        //         clusterCounter++;
+        //         for (j = 0; j < arrayListofClusters.get(i).size(); j++) {
+        //             System.out.print(arrayListofClusters.get(i).get(j) + ", ");
+        //         }
+        //         System.out.println("\n total objects: " + arrayListofClusters.get(i).size()); // displays total objects
+        //         System.out.println();
+        //         System.out.println("================================");
+        //     }
+        // }
+
+        // Filling the MATRIX after Divisive
+        //fillMatrix();
+        for (int p = 0; p < arrayListofTempClusters.size(); p++) {
+            for (int q = 0; q < arrayListofTempClusters.get(p).size(); q++) {
+                int m = arrayListofTempClusters.get(p).get(q);
+                for (int r = 0; r < arrayListofTempClusters.get(p).size(); r++) {
+                    int n = arrayListofTempClusters.get(p).get(r);
+                    matrix[m][n] += 1;
                 }
-                System.out.println("\n total objects: " + arrayListofClusters.get(i).size()); // displays total objects
-                System.out.println();
-                System.out.println("================================");
             }
         }
+        displayMatrix();
     }
 
 
@@ -1329,32 +1662,45 @@ public class RecommenderSystem {
             System.out.println("iterator: " + iterator);
         }
 
-        // Add all clusters to arrayListofClusters()
-        int j = 0;
-        for (int i = 0; i < arrayListofTempClusters.size(); i++) {
-            if (arrayListofTempClusters.get(i).size() > 0) {
-                arrayListofClusters.get(j).addAll(arrayListofTempClusters.get(i));
-                j++;
-                // empty the arraylist where x and y was.
-                arrayListofTempClusters.get(i).clear();
-            }
-        }
+//        // Add all clusters to arrayListofClusters()
+//        int j = 0;
+//        for (int i = 0; i < arrayListofTempClusters.size(); i++) {
+//            if (arrayListofTempClusters.get(i).size() > 0) {
+//                arrayListofClusters.get(j).addAll(arrayListofTempClusters.get(i));
+//                j++;
+//                // empty the arraylist where x and y was.
+//                arrayListofTempClusters.get(i).clear();
+//            }
+//        }
+//
+//        // Display clusters
+//        System.out.println("Clusters after Single-Linkage clustering:");
+//        int totalClusters = 0;
+//        for (int i = 0; i < arrayListofClusters.size(); i++) {
+//            if (arrayListofClusters.get(i).size() > 0) {
+//                for (j = 0; j < arrayListofClusters.get(i).size(); j++) {
+//                    System.out.print(arrayListofClusters.get(i).get(j) + ", ");
+//                }
+//                System.out.println("\n total objects: " + arrayListofClusters.get(i).size()); // displays total objects
+//                System.out.println();
+//                System.out.println("================================");
+//                totalClusters++;
+//            }
+//        }
+//        System.out.println("\n total clusters: " + totalClusters);
 
-        // Display clusters
-        System.out.println("Clusters after Single-Linkage clustering:");
-        int totalClusters = 0;
-        for (int i = 0; i < arrayListofClusters.size(); i++) {
-            if (arrayListofClusters.get(i).size() > 0) {
-                for (j = 0; j < arrayListofClusters.get(i).size(); j++) {
-                    System.out.print(arrayListofClusters.get(i).get(j) + ", ");
+        // Filling the MATRIX after Single-Linkage
+        //fillMatrix();
+        for (int p = 0; p < arrayListofTempClusters.size(); p++) {
+            for (int q = 0; q < arrayListofTempClusters.get(p).size(); q++) {
+                int m = arrayListofTempClusters.get(p).get(q);
+                for (int r = 0; r < arrayListofTempClusters.get(p).size(); r++) {
+                    int n = arrayListofTempClusters.get(p).get(r);
+                    matrix[m][n] += 1;
                 }
-                System.out.println("\n total objects: " + arrayListofClusters.get(i).size()); // displays total objects
-                System.out.println();
-                System.out.println("================================");
-                totalClusters++;
             }
         }
-        System.out.println("\n total clusters: " + totalClusters);
+        displayMatrix();
     }
 
 
@@ -1466,5 +1812,9 @@ public class RecommenderSystem {
             }
         }
         System.out.println("\n total clusters: " + totalClusters);
+
+        // Filling the MATRIX after Complete-Linkage
+        fillMatrix();
+        displayMatrix();
     }
 }

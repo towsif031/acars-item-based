@@ -380,15 +380,65 @@ public class RecommenderSystem {
     }
 
     // The MATRIX to fill after every clustering
-    void fillMatrix() {
-        for (int p = 0; p < arrayListofClusters.size(); p++) {
-            for (int q = 0; q < arrayListofClusters.get(p).size(); q++) {
-                int m = arrayListofClusters.get(p).get(q);
-                for (int r = 0; r < arrayListofClusters.get(p).size(); r++) {
-                    int n = arrayListofClusters.get(p).get(r);
-                    matrix[m][n] += 1;
+    void fillMatrix() throws FileNotFoundException, IOException {
+        File file = new File("F:/ThesisWorks/Datasets/90_10/userMatrix.csv");
+        boolean exists = file.exists();
+        if (!exists) {
+            System.out.println("[userMatrix.csv] File Does Not Exist!");
+
+            // writing userMatrix.csv
+            PrintWriter out1 = new PrintWriter(new FileWriter(outputPathPrefix + "userMatrix.csv"));
+            for (int p = 0; p < arrayListofClusters.size(); p++) {
+                for (int q = 0; q < arrayListofClusters.get(p).size(); q++) {
+                    int m = arrayListofClusters.get(p).get(q);
+                    for (int r = 0; r < arrayListofClusters.get(p).size(); r++) {
+                        int n = arrayListofClusters.get(p).get(r);
+                        matrix[m][n] += 1;
+
+                        // save in file
+                        out1.println(m + "," + n + "," + matrix[m][n]);
+                        out1.flush();
+                    }
                 }
             }
+            out1.close();
+        } else {
+            System.out.println("[userMatrix.csv] File Exist!");
+
+            // reading userMatrix.csv
+            BufferedReader in = new BufferedReader(new FileReader(inputPathPrefix + "userMatrix.csv"));
+            String text;
+            String[] cut;
+            int i = 0, j = 0;
+            while ((text = in .readLine()) != null) {
+                cut = text.split(",");
+                i = Integer.parseInt(cut[0]);
+                j = Integer.parseInt(cut[1]);
+                matrix[i][j] = Double.parseDouble(cut[2]);
+                System.out.println("Reading...");
+                System.out.println("matrix[" + i + "][" + j + "] = " + matrix[i][j]);
+            }
+
+            // updating userMatrix.csv
+            PrintWriter out2 = new PrintWriter(new FileWriter(outputPathPrefix + "userMatrix.csv"));
+            for (int p = 0; p < arrayListofClusters.size(); p++) {
+                for (int q = 0; q < arrayListofClusters.get(p).size(); q++) {
+                    int m = arrayListofClusters.get(p).get(q);
+                    for (int r = 0; r < arrayListofClusters.get(p).size(); r++) {
+                        int n = arrayListofClusters.get(p).get(r);
+                        matrix[m][n] += 1;
+
+                        // save update in file
+                        out2.println(m + "," + n + "," + matrix[m][n]);
+                        out2.flush();
+
+                        System.out.println();
+                        System.out.println("After updating:");
+                        System.out.println("matrix[" + m + "][" + n + "] = " + matrix[m][n]);
+                    }
+                }
+            }
+            out2.close();
         }
     }
 
@@ -586,7 +636,7 @@ public class RecommenderSystem {
     // ============================================================ //
     // K-Means Clustering
     // ============================================================ //
-    void K_MeansClustering() {
+    void K_MeansClustering() throws FileNotFoundException, IOException {
         clusterCentroids = new ArrayList < Integer > ();
         // Choosing 1 centroid from every 100 objects orderly.
         clusterCentroids = randomInRange(clusterCentroids);
@@ -756,16 +806,16 @@ public class RecommenderSystem {
         }
         System.out.println("\n total clusters: " + totalClusters);
 
-        // // Filling the MATRIX after K-Means
-        // fillMatrix();
-        // displayMatrix();
+        // Filling the MATRIX after K-Means
+        fillMatrix();
+        displayMatrix();
     }
 
 
     // ============================================================ //
     // K-Medoids Clustering
     // ============================================================ //
-    void K_MedoidsClustering() {
+    void K_MedoidsClustering() throws FileNotFoundException, IOException {
         clusterCentroids = new ArrayList < Integer > (); // Arraylist of initial centroids
 
         // Find 61 random centroids (K) within dataset
@@ -1046,7 +1096,7 @@ public class RecommenderSystem {
     // ============================================================ //
     // DBSCAN Clustering
     // ============================================================ //
-    void DBSCANClusteringO() {
+    void DBSCANClusteringO() throws FileNotFoundException, IOException {
         double eps = 0.05; // minimum epsilon
         int minPts = 10; // minimum number of points
         boolean[] flagForVisited = new boolean[mxuid]; // Mark all object as unvisited
@@ -1156,7 +1206,7 @@ public class RecommenderSystem {
     /// ============================================================ //
     // DBSCAN Clustering
     // ============================================================ //
-    void DBSCANClustering() {
+    void DBSCANClustering() throws FileNotFoundException, IOException {
         double eps = 0.02; // minimum epsilon
         int minPts = 10; // minimum number of points
         boolean[] flagForVisited = new boolean[mxuid]; // Mark all object as unvisited
@@ -1283,7 +1333,7 @@ public class RecommenderSystem {
     // ============================================================ //
     // Mean Shift Clustering
     // ============================================================ //
-    void MeanShiftClustering() {
+    void MeanShiftClustering() throws FileNotFoundException, IOException {
         double radius = 0.05; // radius
         boolean[] flagForVisited = new boolean[mxuid]; // Mark all object as unvisited
 
@@ -1427,7 +1477,7 @@ public class RecommenderSystem {
         }
 
         // Filling the MATRIX after MeanShift
-        fillMatrix();
+        //fillMatrix();
         displayMatrix();
     }
 
@@ -1435,7 +1485,7 @@ public class RecommenderSystem {
     // ============================================================ //
     // Divisive Clustering
     // ============================================================ //
-    void DivisiveClustering() {
+    void DivisiveClustering() throws FileNotFoundException, IOException {
 
         List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
         for (int i = 0; i < mxuid; i++) {
@@ -1618,7 +1668,7 @@ public class RecommenderSystem {
     //---------------------------//
     // Single-linkage clustering //
     //---------------------------//
-    void SingleLinkageClustering() {
+    void SingleLinkageClustering() throws FileNotFoundException, IOException {
         List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
         for (int i = 0; i < mxuid; i++) {
             arrayListofClusters.add(new ArrayList < Integer > ());
@@ -1730,7 +1780,7 @@ public class RecommenderSystem {
     //-----------------------------//
     // Complete-linkage clustering //
     //-----------------------------//
-    void CompleteLinkageClustering() {
+    void CompleteLinkageClustering() throws FileNotFoundException, IOException {
         List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
         for (int i = 0; i < mxuid; i++) {
             arrayListofClusters.add(new ArrayList < Integer > ());
@@ -1837,7 +1887,7 @@ public class RecommenderSystem {
         System.out.println("\n total clusters: " + totalClusters);
 
         // Filling the MATRIX after Complete-Linkage
-        fillMatrix();
+        //fillMatrix();
         displayMatrix();
     }
 }

@@ -28,7 +28,7 @@ public class ACARS {
 
         ////rs.missingUid();
 
-        //rs.K_MeansClustering();
+        rs.K_MeansClustering();
         ////rs.K_MedoidsClustering();
         //rs.DBSCANClustering();
         ////rs.MeanShiftClustering();

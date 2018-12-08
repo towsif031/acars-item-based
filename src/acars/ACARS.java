@@ -38,6 +38,6 @@ public class ACARS {
 
         ////rs.displayMatrix();
         ////rs.fillMatrixRandom();
-        //rs.calculateAMAE();
+        rs.calculateAMAE();
     }
 }

@@ -96,7 +96,7 @@ public class RecommenderSystem {
         }
         /*Calculate the average of all user*/
         int sz = 0;
-        for (int i = 1; i < mxuid; i++) {
+        for (int i = 2; i < mxuid; i++) {
             sz = userCluster.get(i).size();
             if (sz != 0) {
                 userAvg[i] = (userSum[i] / sz);
@@ -127,8 +127,8 @@ public class RecommenderSystem {
     // // The MATRIX to Fill
     // void fillMatrixRandom() {
     //     Random r = new Random();
-    //     for (int currentUser = 1; currentUser < mxuid; currentUser++) {
-    //         for (int currentNextUser = 1; currentNextUser < mxuid; currentNextUser++) {
+    //     for (int currentUser = 2; currentUser < mxuid; currentUser++) {
+    //         for (int currentNextUser = 2; currentNextUser < mxuid; currentNextUser++) {
     //             int Low = 0;
     //             int High = 7;
     //             int result = r.nextInt(High - Low) + Low;
@@ -148,8 +148,9 @@ public class RecommenderSystem {
             userFlag[u] = true;
             curr = new Double[mxuid];
             curr[0] = -1.0;
-            for (int i = 1; i < mxuid; i++) {
-
+            curr[1] = -1.0;
+            for (int i = 2; i < mxuid; i++) {
+                //curr[1] missing
                 curr[i] = (-1.0) * matrix[u][i];
             }
             comparator = new ArrayIndexComparator(curr);
@@ -229,7 +230,7 @@ public class RecommenderSystem {
             arhrUp = 0;
             arhrLow = 0;
             double globalRoundingErrorSum = 0;
-            for (int user = 1; user < mxuid; user++) {
+            for (int user = 2; user < mxuid; user++) {
                 List < Integer > itemsList = userClusterTest.get(user);
                 Integer oneUserItemsSize = itemsList.size();
                 for (Integer index = 0; index < oneUserItemsSize; index++) {

@@ -9,7 +9,7 @@ import java.util.Comparator;
 
 /**
  *
- * @author kalponik
+ * @author TOWSIF AHMED
  */
 public class ArrayIndexComparator implements Comparator<Integer>
 {

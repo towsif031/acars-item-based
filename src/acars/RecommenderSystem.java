@@ -209,7 +209,7 @@ public class RecommenderSystem {
         PrintWriter out2 = new PrintWriter(new FileWriter(outputPathPrefix + "ResultData.csv"));
         PrintWriter out3 = new PrintWriter(new FileWriter(outputPathPrefix + "calculatedARHR.csv"));
 
-        int neighbor = 400;
+        int neighbor = 420;
         int friend = 0;
         double precisionUp = 0, precisionLow = 0, precision = 0, coverage = 0, coverageUp = 0, coverageLow = 0;
         double recallUp = 0, recallLow = 0, recall = 0;
@@ -821,6 +821,7 @@ public class RecommenderSystem {
 
         // Find 61 random centroids (K) within dataset
         clusterCentroids = uniqueRandomInRange(clusterCentroids);
+
         List < List < Integer >> arrayListofTempClusters = new ArrayList < List < Integer >> (mxuid);
         for (int i = 0; i < mxuid; i++) {
             arrayListofTempClusters.add(new ArrayList < Integer > ());
@@ -837,7 +838,7 @@ public class RecommenderSystem {
             for (int j = 0; j < clusterCentroids.size(); j++) {
                 int centroid = clusterCentroids.get(j);
                 if (i == centroid) { // If item itself is centroid
-                    arrayListofClusters.get(j).add(i); // Add centroid to its own cluster
+                    arrayListofClusters.get(i).add(i); // Add centroid to its own cluster
                     isCentroid = true;
                 }
             }
@@ -1648,17 +1649,20 @@ public class RecommenderSystem {
         //     }
         // }
 
+        //////////////
+        arrayListofClusters = arrayListofTempClusters;
+
         // Filling the MATRIX after Divisive
-        //fillMatrix();
-        for (int p = 0; p < arrayListofTempClusters.size(); p++) {
-            for (int q = 0; q < arrayListofTempClusters.get(p).size(); q++) {
-                int m = arrayListofTempClusters.get(p).get(q);
-                for (int r = 0; r < arrayListofTempClusters.get(p).size(); r++) {
-                    int n = arrayListofTempClusters.get(p).get(r);
-                    matrix[m][n] += 1;
-                }
-            }
-        }
+        fillMatrix();
+//        for (int p = 0; p < arrayListofTempClusters.size(); p++) {
+//            for (int q = 0; q < arrayListofTempClusters.get(p).size(); q++) {
+//                int m = arrayListofTempClusters.get(p).get(q);
+//                for (int r = 0; r < arrayListofTempClusters.get(p).size(); r++) {
+//                    int n = arrayListofTempClusters.get(p).get(r);
+//                    matrix[m][n] += 1;
+//                }
+//            }
+//        }
         displayMatrix();
     }
 
@@ -1763,17 +1767,21 @@ public class RecommenderSystem {
         //        }
         //        System.out.println("\n total clusters: " + totalClusters);
 
+
+        /////////////
+        arrayListofClusters = arrayListofTempClusters;
+
         // Filling the MATRIX after Single-Linkage
-        //fillMatrix();
-        for (int p = 0; p < arrayListofTempClusters.size(); p++) {
-            for (int q = 0; q < arrayListofTempClusters.get(p).size(); q++) {
-                int m = arrayListofTempClusters.get(p).get(q);
-                for (int r = 0; r < arrayListofTempClusters.get(p).size(); r++) {
-                    int n = arrayListofTempClusters.get(p).get(r);
-                    matrix[m][n] += 1;
-                }
-            }
-        }
+        fillMatrix();
+//        for (int p = 0; p < arrayListofTempClusters.size(); p++) {
+//            for (int q = 0; q < arrayListofTempClusters.get(p).size(); q++) {
+//                int m = arrayListofTempClusters.get(p).get(q);
+//                for (int r = 0; r < arrayListofTempClusters.get(p).size(); r++) {
+//                    int n = arrayListofTempClusters.get(p).get(r);
+//                    matrix[m][n] += 1;
+//                }
+//            }
+//        }
         displayMatrix();
     }
 

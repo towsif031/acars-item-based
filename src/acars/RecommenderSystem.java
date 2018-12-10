@@ -96,7 +96,7 @@ public class RecommenderSystem {
         }
         /*Calculate the average of all user*/
         int sz = 0;
-        for (int i = 2; i < mxuid; i++) {
+        for (int i = 1; i < mxuid; i++) {
             sz = userCluster.get(i).size();
             if (sz != 0) {
                 userAvg[i] = (userSum[i] / sz);
@@ -127,8 +127,8 @@ public class RecommenderSystem {
     // // The MATRIX to Fill
     // void fillMatrixRandom() {
     //     Random r = new Random();
-    //     for (int currentUser = 2; currentUser < mxuid; currentUser++) {
-    //         for (int currentNextUser = 2; currentNextUser < mxuid; currentNextUser++) {
+    //     for (int currentUser = 1; currentUser < mxuid; currentUser++) {
+    //         for (int currentNextUser = 1; currentNextUser < mxuid; currentNextUser++) {
     //             int Low = 0;
     //             int High = 7;
     //             int result = r.nextInt(High - Low) + Low;
@@ -149,7 +149,7 @@ public class RecommenderSystem {
             curr = new Double[mxuid];
             curr[0] = -1.0;
             curr[1] = -1.0;
-            for (int i = 2; i < mxuid; i++) {
+            for (int i = 1; i < mxuid; i++) {
                 //curr[1] missing
                 curr[i] = (-1.0) * matrix[u][i];
             }
@@ -230,7 +230,7 @@ public class RecommenderSystem {
             arhrUp = 0;
             arhrLow = 0;
             double globalRoundingErrorSum = 0;
-            for (int user = 2; user < mxuid; user++) {
+            for (int user = 1; user < mxuid; user++) {
                 List < Integer > itemsList = userClusterTest.get(user);
                 Integer oneUserItemsSize = itemsList.size();
                 for (Integer index = 0; index < oneUserItemsSize; index++) {
@@ -373,8 +373,8 @@ public class RecommenderSystem {
 
     // initial matrix
     void initFillMatrix() {
-        for (int i = 2; i < mxuid; i++) {
-            for (int j = 2; j < mxuid; j++) {
+        for (int i = 1; i < mxuid; i++) {
+            for (int j = 1; j < mxuid; j++) {
                 matrix[i][j] = 0;
             }
         }
@@ -447,8 +447,8 @@ public class RecommenderSystem {
     void displayMatrix() {
         System.out.println();
         System.out.println("display matrix...");
-        for (int i = 2; i < mxuid; i++) {
-            for (int j = 2; j < mxuid; j++) {
+        for (int i = 1; i < mxuid; i++) {
+            for (int j = 1; j < mxuid; j++) {
                 if (matrix[i][j] > 0) {
                     System.out.println("matrix[" + i + "][" + j + "] = " + matrix[i][j]);
                 }
@@ -491,8 +491,8 @@ public class RecommenderSystem {
             System.out.println("[userDiffs.csv] File Does Not Exist!");
 
             PrintWriter out = new PrintWriter(new FileWriter(outputPathPrefix + "userDiffs.csv"));
-            for (int u = 2; u < mxuid; u++) { // as there is no uid 1. so we start from uid 2 for simplicity
-                for (int v = 2; v < mxuid; v++) {
+            for (int u = 1; u < mxuid; u++) {
+                for (int v = 1; v < mxuid; v++) {
                     //if (userCluster.get(u).size() != 0 && userCluster.get(v).size() != 0) {
                     List < Integer > userList = userCluster.get(u);
                     int itemSize = userList.size();
@@ -521,15 +521,7 @@ public class RecommenderSystem {
             out.close();
         }
     }
-
-    // //// Finding out missing uids
-    // void missingUid() {
-    //     for (int u = 1; u < mxuid; u++) {
-    //         if (userCluster.get(u).size() == 0) {
-    //             System.out.println(u);
-    //         }
-    //     }
-    // }
+    
     // Display distance between 2 user objects
     void distanceCalculator(int u, int v) {
         System.out.println("Distance between " + u + " and " + v + " is " + diff[u][v]);
@@ -538,9 +530,7 @@ public class RecommenderSystem {
     // Choose random 1 centroid from every 100 objects orderly. 6040 users So, K = 61
     ArrayList < Integer > randomInRange(ArrayList < Integer > clusterCentroids) {
         Random r = new Random();
-        int firstrandom = r.nextInt(99 - 2 + 1) + 2;    // rand.nextInt((max - min) + 1) + min;
-        clusterCentroids.add(firstrandom);
-        for (int userId = 100; userId + 100 < mxuid; userId = userId + 100) {
+        for (int userId = 1; userId + 100 < mxuid; userId = userId + 100) {
             int Low = userId;
             int High = userId + 100;
             int Result = r.nextInt(High - Low + 1) + Low;    // rand.nextInt((max - min) + 1) + min;
@@ -560,7 +550,7 @@ public class RecommenderSystem {
         int numofCluster = 61;
         Random rand = new Random();
         while (numofCluster > 0) {
-            int n = rand.nextInt(6040 - 2 + 1) + 2;     // rand.nextInt((max - min) + 1) + min;
+            int n = rand.nextInt(6040 - 1 + 1) + 1;     // rand.nextInt((max - min) + 1) + min;
             if (clusterCentroids.size() == 0) {
                 clusterCentroids.add(n);
                 numofCluster--;
@@ -619,7 +609,7 @@ public class RecommenderSystem {
         displayClusterCentroids();
 
         //  Populate each cluster with closest objects to its centroid
-        for (int i = 2; i < mxuid; i++) { // i = current item
+        for (int i = 1; i < mxuid; i++) { // i = current item
             // Check if item itself is centroid
             // Because sometimes 2 users' diff may be 0.0
             boolean isCentroid = false;
@@ -714,7 +704,7 @@ public class RecommenderSystem {
             oldClusterCentroids = clusterCentroids;
 
             // For new centroids: Again populating each cluster with closest objects to its centroid
-            for (int i = 2; i < mxuid; i++) { // i = current item
+            for (int i = 1; i < mxuid; i++) { // i = current item
                 // Check if item itself is centroid
                 // Because sometimes 2 users' diff may be 0.0
                 boolean isNewCentroid = false;
@@ -792,7 +782,7 @@ public class RecommenderSystem {
     void K_MedoidsClustering() throws FileNotFoundException, IOException {
         boolean[] isUsedCentroid = new boolean[mxuid];
 
-        for (int i = 2; i < mxuid; i++) {
+        for (int i = 1; i < mxuid; i++) {
             isUsedCentroid[i] = false;
         }
 
@@ -810,7 +800,7 @@ public class RecommenderSystem {
         // displayClusterCentroids();
 
         //  Populate each cluster with closest objects to its centroid
-        for (int i = 2; i < mxuid; i++) { // i = current item
+        for (int i = 1; i < mxuid; i++) { // i = current item
             // Check if item itself is centroid
             // Because sometimes 2 users' diff may be 0.0
             boolean isCentroid = false;
@@ -925,7 +915,7 @@ public class RecommenderSystem {
             // }
 
             //  Populate each cluster with closest objects to its centroid
-            for (int i = 2; i < mxuid; i++) { // i = current item
+            for (int i = 1; i < mxuid; i++) { // i = current item
                 // Check if item itself is centroid
                 // Because sometimes 2 users' diff may be 0.0
                 boolean isNewCentroid = false;
@@ -997,7 +987,7 @@ public class RecommenderSystem {
 
             // check if all users are used centroid
             int usedAsCentroidCount = 0;
-            for (int i = 2; i < mxuid; i++) {
+            for (int i = 1; i < mxuid; i++) {
                 if (!isUsedCentroid[i]) { // if any user not yet used as centroid
                     usedAsCentroidCount = 1;
                     break;
@@ -1034,15 +1024,15 @@ public class RecommenderSystem {
         boolean[] isInCluster = new boolean[mxuid];
         boolean[] isNoise = new boolean[mxuid];
 
-        for (int i = 2; i < mxuid; i++) { // Mark all object as unvisited
+        for (int i = 1; i < mxuid; i++) { // Mark all object as unvisited
             flagForVisited[i] = false;
         }
 
-        for (int i = 2; i < mxuid; i++) { // Mark all object as is not in any cluster
+        for (int i = 1; i < mxuid; i++) { // Mark all object as is not in any cluster
             isInCluster[i] = false;
         }
 
-        for (int i = 2; i < mxuid; i++) { // Mark all object as not noise
+        for (int i = 1; i < mxuid; i++) { // Mark all object as not noise
             isNoise[i] = false;
         }
 
@@ -1057,11 +1047,11 @@ public class RecommenderSystem {
             arrayListofClusters.add(new ArrayList < Integer > ());
         }
 
-        for (int i = 2; i < mxuid; i++) {
+        for (int i = 1; i < mxuid; i++) {
             if (flagForVisited[i] == false) {
                 flagForVisited[i] = true; // Mark i as visited
 
-                for (int j = 2; j < mxuid; j++) {
+                for (int j = 1; j < mxuid; j++) {
                     if (diff[i][j] <= eps) {
                         neighborObjects.get(i).add(j);
                     }
@@ -1077,7 +1067,7 @@ public class RecommenderSystem {
                         if (flagForVisited[p] == false) {
                             flagForVisited[p] = true;
                             //arrayListofClusters.get(i).add(p);
-                            for (int l = 2; l < mxuid; l++) {
+                            for (int l = 1; l < mxuid; l++) {
                                 if (diff[p][l] <= eps) {
                                     neighborObjects.get(p).add(l);
                                 }
@@ -1142,15 +1132,15 @@ public class RecommenderSystem {
         boolean[] isInCluster = new boolean[mxuid];
         boolean[] isNoise = new boolean[mxuid];
 
-        for (int i = 2; i < mxuid; i++) { // Mark all object as unvisited
+        for (int i = 1; i < mxuid; i++) { // Mark all object as unvisited
             flagForVisited[i] = false;
         }
 
-        for (int i = 2; i < mxuid; i++) { // Mark all object as is not in any cluster
+        for (int i = 1; i < mxuid; i++) { // Mark all object as is not in any cluster
             isInCluster[i] = false;
         }
 
-        for (int i = 2; i < mxuid; i++) { // Mark all object as not noise
+        for (int i = 1; i < mxuid; i++) { // Mark all object as not noise
             isNoise[i] = false;
         }
 
@@ -1162,11 +1152,11 @@ public class RecommenderSystem {
             arrayListofClusters.add(new ArrayList < Integer > ());
         }
 
-        for (int i = 2; i < mxuid; i++) {
+        for (int i = 1; i < mxuid; i++) {
             if (flagForVisited[i] == false) {
                 flagForVisited[i] = true; // Mark i as visited
 
-                for (int j = 2; j < mxuid; j++) {
+                for (int j = 1; j < mxuid; j++) {
                     if (diff[i][j] <= eps) {
                         neighborObjects.add(j); // N
                     }
@@ -1188,7 +1178,7 @@ public class RecommenderSystem {
                         if (flagForVisited[p] == false) {
                             flagForVisited[p] = true;
                             //arrayListofClusters.get(i).add(p);
-                            for (int l = 2; l < mxuid; l++) {
+                            for (int l = 1; l < mxuid; l++) {
                                 if (diff[p][l] <= eps) {
                                     neighborObjectsOfp.add(l);
                                 }
@@ -1267,7 +1257,7 @@ public class RecommenderSystem {
     void MeanShiftClustering() throws FileNotFoundException, IOException {
         double radius = 0.05; // radius
         boolean[] flagForVisited = new boolean[mxuid];
-        for (int i = 2; i < mxuid; i++) { // Mark all object as unvisited
+        for (int i = 1; i < mxuid; i++) { // Mark all object as unvisited
             flagForVisited[i] = false;
         }
 
@@ -1282,7 +1272,7 @@ public class RecommenderSystem {
         int newCentroid = 0;
         int oldCentroid = 0;
 
-        for (int i = 2; i < mxuid; i++) {
+        for (int i = 1; i < mxuid; i++) {
             if (flagForVisited[i] == false) {
                 flagForVisited[i] = true;
 
@@ -1301,7 +1291,7 @@ public class RecommenderSystem {
                 arrayListofClusters.get(coreObjectPosition).add(i);
 
                 // initial tempCluster
-                for (int j = 2; j < mxuid; j++) {
+                for (int j = 1; j < mxuid; j++) {
                     if (diff[i][j] <= radius) {
                         tempCluster.add(j);
                     }
@@ -1337,7 +1327,7 @@ public class RecommenderSystem {
                         System.out.println("newCentroid / new mean: " + newCentroid);
 
                         //form cluster
-                        for (int m = 2; m < mxuid; m++) {
+                        for (int m = 1; m < mxuid; m++) {
                             if (diff[newCentroid][m] <= radius) {
                                 newTempCluster.add(m);
                             }
@@ -1437,7 +1427,7 @@ public class RecommenderSystem {
         double distance = 0;
         int x = 0;
         int y = 0;
-        for (int i = 2; i < mxuid; i++) {
+        for (int i = 1; i < mxuid; i++) {
             for (int j = i + 1; j < mxuid; j++) {
                 distance = diff[i][j];
                 if (distance > maxDistance) {
@@ -1451,7 +1441,7 @@ public class RecommenderSystem {
         ////// for debugging purpose
         System.out.println("2 most furthest users are: " + x + " and " + y);
 
-        for (int i = 2; i < mxuid; i++) {
+        for (int i = 1; i < mxuid; i++) {
             if (diff[i][x] <= diff[i][y]) {
                 arrayListofTempClusters.get(x).add(i);
             } else {
@@ -1615,7 +1605,7 @@ public class RecommenderSystem {
         }
 
         // Initially creating separate clusters for each user
-        for (int i = 2; i < mxuid; i++) {
+        for (int i = 1; i < mxuid; i++) {
             arrayListofTempClusters.get(i).add(i);
         }
 
@@ -1731,7 +1721,7 @@ public class RecommenderSystem {
         }
 
         // Initially creating separate clusters for each user
-        for (int i = 2; i < mxuid; i++) {
+        for (int i = 1; i < mxuid; i++) {
             arrayListofTempClusters.get(i).add(i);
         }
 

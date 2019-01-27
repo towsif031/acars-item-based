@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ACARS.iml" filepath="$PROJECT_DIR$/ACARS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/acarsib.iml" filepath="$PROJECT_DIR$/acarsib.iml" />
     </modules>
   </component>
 </project>

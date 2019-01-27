@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package acars;
+package acarsib;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -382,7 +382,7 @@ public class RecommenderSystem {
 
     // The MATRIX to fill after every clustering
     void fillMatrix() throws FileNotFoundException, IOException {
-        File file = new File("F:/ThesisWorks/Datasets/90_10/userMatrix.csv");
+        File file = new File("F:/ThesisPaper/datasets/90_10/userMatrix.csv");
         boolean exists = file.exists();
         if (!exists) {
             System.out.println("[userMatrix.csv] File Does Not Exist!");
@@ -471,7 +471,7 @@ public class RecommenderSystem {
 
     // Distance Calculator
     void calculateDistance() throws FileNotFoundException, IOException {
-        File file = new File("F:/ThesisWorks/Datasets/90_10/userDiffs.csv");
+        File file = new File("F:/ThesisPaper/datasets/90_10/userDiffs.csv");
         boolean exists = file.exists();
         if (exists) {
             System.out.println("[userDiffs.csv] File Exist!");

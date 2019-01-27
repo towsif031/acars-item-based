@@ -22,8 +22,10 @@ public class RecommenderSystem {
     int mxmid = 3953;
     int mxuid = 6041;
 
-    List < List < Integer >> userCluster = new ArrayList < List < Integer >> (mxuid);
-    List < List < Integer >> userClusterTest = new ArrayList < List < Integer >> (mxuid);
+//    List < List < Integer >> userCluster = new ArrayList < List < Integer >> (mxuid);
+    List < List < Integer >> itemCluster = new ArrayList < List < Integer >> (mxuid);
+//    List < List < Integer >> userClusterTest = new ArrayList < List < Integer >> (mxuid);
+    List < List < Integer >> itemClusterTest = new ArrayList < List < Integer >> (mxuid);
     List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
 
     Map < String, Integer > m = new TreeMap < String, Integer > ();
@@ -61,11 +63,17 @@ public class RecommenderSystem {
 
     void init() {
 
-        for (int i = 0; i < mxuid; i++) {
-            userCluster.add(new ArrayList < Integer > ());
+//        for (int i = 0; i < mxuid; i++) {
+//            userCluster.add(new ArrayList < Integer > ());
+//        }
+        for (int i = 0; i < mxmid; i++) {
+            itemCluster.add(new ArrayList < Integer > ());
         }
-        for (int i = 0; i < mxuid; i++) {
-            userClusterTest.add(new ArrayList < Integer > ());
+//        for (int i = 0; i < mxuid; i++) {
+//            userClusterTest.add(new ArrayList < Integer > ());
+//        }
+        for (int i = 0; i < mxmid; i++) {
+            itemClusterTest.add(new ArrayList < Integer > ());
         }
 
         for (int i = 0; i < mxuid; i++) {
@@ -90,22 +98,22 @@ public class RecommenderSystem {
             // System.out.println(uid+" + "+ mid +" + "+ r +" + "+t);
             rat[uid][mid] = r;
 
-            userCluster.get(uid).add(mid);
-            // itemCluster.get(mid).add(uid);
+//            userCluster.get(uid).add(mid);
+            itemCluster.get(mid).add(uid);
             userSum[mid] += r;
         }
-        /*Calculate the average of all user*/
-        int sz = 0;
-        for (int i = 1; i < mxuid; i++) {
-            sz = userCluster.get(i).size();
-            if (sz != 0) {
-                userAvg[i] = (userSum[i] / sz);
-
-            } else {
-                userAvg[i] = 0;
-            }
-            // out.println(usrAvg[i]);
-        }
+//        /*Calculate the average of all user*/
+//        int sz = 0;
+//        for (int i = 1; i < mxuid; i++) {
+//            sz = userCluster.get(i).size();
+//            if (sz != 0) {
+//                userAvg[i] = (userSum[i] / sz);
+//
+//            } else {
+//                userAvg[i] = 0;
+//            }
+//            // out.println(usrAvg[i]);
+//        }
 
         // Reading the test.csv file
         in = new BufferedReader(new FileReader(inputPathPrefix + "test.csv"));
@@ -119,7 +127,8 @@ public class RecommenderSystem {
             t = Integer.parseInt(cut[3]);
             //System.out.println(uid+" + "+ mid +" + "+ r +" + "+t);
             Rat[uid][mid] = r;
-            userClusterTest.get(uid).add(mid);
+//            userClusterTest.get(uid).add(mid);
+            itemClusterTest.get(mid).add(uid);
             totalRat++;
         }
     }
@@ -205,171 +214,171 @@ public class RecommenderSystem {
         return avgRat + userAvg[u];
     }
 
-    void calculateAMAE() throws FileNotFoundException, IOException {
-        PrintWriter out2 = new PrintWriter(new FileWriter(outputPathPrefix + "ResultData.csv"));
-        PrintWriter out3 = new PrintWriter(new FileWriter(outputPathPrefix + "calculatedARHR.csv"));
-
-        int neighbor = 640;
-        int friend = 0;
-        double precisionUp = 0, precisionLow = 0, precision = 0, coverage = 0, coverageUp = 0, coverageLow = 0;
-        double recallUp = 0, recallLow = 0, recall = 0;
-        double arhrUp = 0, arhrLow = 0, arhr = 0;
-        for (friend = 120; friend <= neighbor; friend += 10) {
-            userFlag = new boolean[mxuid + 1];
-            // double globalErrorSum = 0;
-            //System.out.println("for : "+friend );
-            precisionUp = 0;
-            precisionLow = 0;
-            precision = 0;
-            recallUp = 0;
-            recallLow = 0;
-            recall = 0;
-            coverageUp = 0;
-            coverageLow = 0;
-            coverage = 0;
-            arhrUp = 0;
-            arhrLow = 0;
-            double globalRoundingErrorSum = 0;
-            for (int user = 1; user < mxuid; user++) {
-                List < Integer > itemsList = userClusterTest.get(user);
-                Integer oneUserItemsSize = itemsList.size();
-                for (Integer index = 0; index < oneUserItemsSize; index++) {
-                    int items = itemsList.get(index);
-                    coverageLow++;
-                    // double predictedRating = normalizedRating(users, items, friend);
-                    double predictedRating = 0;
-
-                    int predictedRounding = 0;
-                    predictedRating = normalizedRatingBestNeighbor(user, items, friend);
-                    // System.out.println(Rat[user][items] + " , " + predictedRating);
-
-                    // globalRoundingErrorSum += Math.abs(Rat[user][items] - predictedRating);
-                    /*
-                    if (litmus == false) {
-                        predictedRating = normalizedRatingBestNeighbor(user, items, friend);
-                        predictedRounding = (int) predictedRating;
-                        if ((predictedRating - predictedRounding) >= 0.5) {
-                            predictedRounding++;
-                        }
-                        predictedRating = predictedRounding;
-                        predRat[user][items] = predictedRating;
-                    } else {
-                        predictedRating = normalizedRatingBestNeighborGeneralized(user, items, friend);
+//    void calculateAMAE() throws FileNotFoundException, IOException {
+//        PrintWriter out2 = new PrintWriter(new FileWriter(outputPathPrefix + "ResultData.csv"));
+//        PrintWriter out3 = new PrintWriter(new FileWriter(outputPathPrefix + "calculatedARHR.csv"));
+//
+//        int neighbor = 640;
+//        int friend = 0;
+//        double precisionUp = 0, precisionLow = 0, precision = 0, coverage = 0, coverageUp = 0, coverageLow = 0;
+//        double recallUp = 0, recallLow = 0, recall = 0;
+//        double arhrUp = 0, arhrLow = 0, arhr = 0;
+//        for (friend = 120; friend <= neighbor; friend += 10) {
+//            userFlag = new boolean[mxuid + 1];
+//            // double globalErrorSum = 0;
+//            //System.out.println("for : "+friend );
+//            precisionUp = 0;
+//            precisionLow = 0;
+//            precision = 0;
+//            recallUp = 0;
+//            recallLow = 0;
+//            recall = 0;
+//            coverageUp = 0;
+//            coverageLow = 0;
+//            coverage = 0;
+//            arhrUp = 0;
+//            arhrLow = 0;
+//            double globalRoundingErrorSum = 0;
+//            for (int user = 1; user < mxuid; user++) {
+//                List < Integer > itemsList = userClusterTest.get(user);
+//                Integer oneUserItemsSize = itemsList.size();
+//                for (Integer index = 0; index < oneUserItemsSize; index++) {
+//                    int items = itemsList.get(index);
+//                    coverageLow++;
+//                    // double predictedRating = normalizedRating(users, items, friend);
+//                    double predictedRating = 0;
+//
+//                    int predictedRounding = 0;
+//                    predictedRating = normalizedRatingBestNeighbor(user, items, friend);
+//                    // System.out.println(Rat[user][items] + " , " + predictedRating);
+//
+//                    // globalRoundingErrorSum += Math.abs(Rat[user][items] - predictedRating);
+//                    /*
+//                    if (litmus == false) {
+//                        predictedRating = normalizedRatingBestNeighbor(user, items, friend);
 //                        predictedRounding = (int) predictedRating;
 //                        if ((predictedRating - predictedRounding) >= 0.5) {
 //                            predictedRounding++;
 //                        }
-                        // predictedRating = predictedRounding;
-                        predRat[user][items] = predictedRating;
-                    }
-                    
-                     */
-
-                    // globalErrorSum += Math.abs(Rat[users][item] - predictedRating);
-                    if (predictedRating != -1) {
-                        coverageUp++;
-
-                        // TP
-                        if (Rat[user][items] > 2 && predictedRating > 2) {
-                            precisionUp++;
-                            precisionLow++;
-                            recallUp++;
-                            recallLow++;
-                        }
-                        // FP
-                        if (Rat[user][items] < 3 && predictedRating > 2) {
-                            precisionLow++;
-                        }
-                        // FN
-                        if (Rat[user][items] > 2 && predictedRating < 3) {
-                            recallLow++;
-                        }
-
-                        //System.out.println(Rat[users][items] + "   " + predictedRating);
-                        //out2.println(Rat[users][items] + "   " + predictedRounding);
-                        globalRoundingErrorSum += Math.abs(Rat[user][items] - predictedRating);
-                    }
-
-                }
-            }
-            // double AMAE = globalErrorSum / totalRat;
-            double AMAE2 = globalRoundingErrorSum / totalRat;
-            precision = precisionUp / precisionLow;
-            recall = recallUp / recallLow;
-            coverage = coverageUp / coverageLow;
-            double f2measures = (2 * precision * recall) / (precision + recall);
-            //out.println("AMAE is without rounding  : " + AMAE);
-            out2.println(friend + "," + AMAE2 + "," + precision + "," + recall + "," + f2measures + "," + coverage);
-            out2.println();
-            out2.println();
-            System.out.println(friend + "," + AMAE2 + "," + precision + "," + recall + "," + f2measures + "," + coverage);
-            //out.flush();
-            //out.close();
-            out2.flush();
-        }
-
-        /*
-        Double[] rr;
-        for (int topK = 2; topK <= 20; topK++) {
-
-            for (int items = 1; items <= mxmid; items++) {
-                List<Integer> usersList = itemClusterTest.get(items);
-                Integer oneItemUsersSize = usersList.size();
-
-                //sort start
-                rr = new Double[oneItemUsersSize];
-                //curr[0] = -1.0;
-                for (Integer in = 0; in < oneItemUsersSize; in++) {
-                    int us = usersList.get(in);
-
-                    rr[in] = (-1.0) * Rat[us][items];
-
-                }
-                comparator = new ArrayIndexComparator(rr);
-                indexes = comparator.createIndexArray();
-                Arrays.sort(indexes, comparator);
-
-                //sort end
-                for (Integer index = 0, top = 0; index < oneItemUsersSize && top < topK; index++, top++) {
-                    int users = usersList.get(index);
-
-                    int ii = indexes[top];
-
-                    if (Rat[users][ii] == 5 && predRat[users][ii] == 5) {
-                        arhrUp += 1 / (double) (top + 1);
-                    }
-//                        else if (Rat[users][ii] == 5 && predRat[users][ii] == 4) {
-//                            arhrUp += (1 / (double)(top+1));
-//                        } 
-//                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 5) {
-//                            arhrUp += (1 / (double)(top+1));
+//                        predictedRating = predictedRounding;
+//                        predRat[user][items] = predictedRating;
+//                    } else {
+//                        predictedRating = normalizedRatingBestNeighborGeneralized(user, items, friend);
+////                        predictedRounding = (int) predictedRating;
+////                        if ((predictedRating - predictedRounding) >= 0.5) {
+////                            predictedRounding++;
+////                        }
+//                        // predictedRating = predictedRounding;
+//                        predRat[user][items] = predictedRating;
+//                    }
+//
+//                     */
+//
+//                    // globalErrorSum += Math.abs(Rat[users][item] - predictedRating);
+//                    if (predictedRating != -1) {
+//                        coverageUp++;
+//
+//                        // TP
+//                        if (Rat[user][items] > 2 && predictedRating > 2) {
+//                            precisionUp++;
+//                            precisionLow++;
+//                            recallUp++;
+//                            recallLow++;
 //                        }
-//                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 4) {
-//                            arhrUp += 1 / (double)(top+1);
-//                        } 
-//                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 4) {
-//                            arhrUp += (1);
-//                        } 
-                    //else if (Rat[users][ii] == 4 && predRat[users][ii] == 3) {
-//                            arhrUp += (1 / 3);
+//                        // FP
+//                        if (Rat[user][items] < 3 && predictedRating > 2) {
+//                            precisionLow++;
 //                        }
-
-                }
-                arhr += arhrUp / topK;
-                //out3.prinln(topK+",");
-            }
-            arhr = arhr / mxmid;
-            System.out.println(topK + "," + arhr);
-            out3.println(topK + "," + arhr);
-            arhr = 0;
-        }
-        
-         */
-        out2.close();
-        out3.flush();
-        out3.close();
-
-    }
+//                        // FN
+//                        if (Rat[user][items] > 2 && predictedRating < 3) {
+//                            recallLow++;
+//                        }
+//
+//                        //System.out.println(Rat[users][items] + "   " + predictedRating);
+//                        //out2.println(Rat[users][items] + "   " + predictedRounding);
+//                        globalRoundingErrorSum += Math.abs(Rat[user][items] - predictedRating);
+//                    }
+//
+//                }
+//            }
+//            // double AMAE = globalErrorSum / totalRat;
+//            double AMAE2 = globalRoundingErrorSum / totalRat;
+//            precision = precisionUp / precisionLow;
+//            recall = recallUp / recallLow;
+//            coverage = coverageUp / coverageLow;
+//            double f2measures = (2 * precision * recall) / (precision + recall);
+//            //out.println("AMAE is without rounding  : " + AMAE);
+//            out2.println(friend + "," + AMAE2 + "," + precision + "," + recall + "," + f2measures + "," + coverage);
+//            out2.println();
+//            out2.println();
+//            System.out.println(friend + "," + AMAE2 + "," + precision + "," + recall + "," + f2measures + "," + coverage);
+//            //out.flush();
+//            //out.close();
+//            out2.flush();
+//        }
+//
+//        /*
+//        Double[] rr;
+//        for (int topK = 2; topK <= 20; topK++) {
+//
+//            for (int items = 1; items <= mxmid; items++) {
+//                List<Integer> usersList = itemClusterTest.get(items);
+//                Integer oneItemUsersSize = usersList.size();
+//
+//                //sort start
+//                rr = new Double[oneItemUsersSize];
+//                //curr[0] = -1.0;
+//                for (Integer in = 0; in < oneItemUsersSize; in++) {
+//                    int us = usersList.get(in);
+//
+//                    rr[in] = (-1.0) * Rat[us][items];
+//
+//                }
+//                comparator = new ArrayIndexComparator(rr);
+//                indexes = comparator.createIndexArray();
+//                Arrays.sort(indexes, comparator);
+//
+//                //sort end
+//                for (Integer index = 0, top = 0; index < oneItemUsersSize && top < topK; index++, top++) {
+//                    int users = usersList.get(index);
+//
+//                    int ii = indexes[top];
+//
+//                    if (Rat[users][ii] == 5 && predRat[users][ii] == 5) {
+//                        arhrUp += 1 / (double) (top + 1);
+//                    }
+////                        else if (Rat[users][ii] == 5 && predRat[users][ii] == 4) {
+////                            arhrUp += (1 / (double)(top+1));
+////                        }
+////                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 5) {
+////                            arhrUp += (1 / (double)(top+1));
+////                        }
+////                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 4) {
+////                            arhrUp += 1 / (double)(top+1);
+////                        }
+////                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 4) {
+////                            arhrUp += (1);
+////                        }
+//                    //else if (Rat[users][ii] == 4 && predRat[users][ii] == 3) {
+////                            arhrUp += (1 / 3);
+////                        }
+//
+//                }
+//                arhr += arhrUp / topK;
+//                //out3.prinln(topK+",");
+//            }
+//            arhr = arhr / mxmid;
+//            System.out.println(topK + "," + arhr);
+//            out3.println(topK + "," + arhr);
+//            arhr = 0;
+//        }
+//
+//         */
+//        out2.close();
+//        out3.flush();
+//        out3.close();
+//
+//    }
 
     // initial matrix
     void initFillMatrix() {
@@ -471,12 +480,12 @@ public class RecommenderSystem {
 
     // Distance Calculator
     void calculateDistance() throws FileNotFoundException, IOException {
-        File file = new File("F:/ThesisPaper/datasets/90_10/userDiffs.csv");
+        File file = new File("F:/ThesisPaper/datasets/90_10/itemDists.csv");
         boolean exists = file.exists();
         if (exists) {
-            System.out.println("[userDiffs.csv] File Exist!");
+            System.out.println("[itemDists.csv] File Exist!");
 
-            BufferedReader in = new BufferedReader(new FileReader(inputPathPrefix + "userDiffs.csv"));
+            BufferedReader in = new BufferedReader(new FileReader(inputPathPrefix + "itemDists.csv"));
             String text;
             String[] cut;
             int u = 0, v = 0;
@@ -488,21 +497,21 @@ public class RecommenderSystem {
                 System.out.println("Distance between " + u + " and " + v + " is " + diff[u][v]);
             }
         } else {
-            System.out.println("[userDiffs.csv] File Does Not Exist!");
+            System.out.println("[itemDists.csv] File Does Not Exist!");
 
-            PrintWriter out = new PrintWriter(new FileWriter(outputPathPrefix + "userDiffs.csv"));
-            for (int u = 1; u < mxuid; u++) {
-                for (int v = 1; v < mxuid; v++) {
+            PrintWriter out = new PrintWriter(new FileWriter(outputPathPrefix + "itemDists.csv"));
+            for (int u = 1; u < mxmid; u++) {
+                for (int v = 1; v < mxmid; v++) {
                     //if (userCluster.get(u).size() != 0 && userCluster.get(v).size() != 0) {
-                    List < Integer > userList = userCluster.get(u);
-                    int itemSize = userList.size();
+                    List < Integer > itemList = itemCluster.get(u);
+                    int itemSize = itemList.size();
                     int commonCounter = 0;
-                    for (int movieIndex = 0; movieIndex < itemSize; movieIndex++) {
-                        int movieId = userList.get(movieIndex);
-                        if (rat[v][movieId] != 0) {
+                    for (int userIndex = 0; userIndex < itemSize; userIndex++) {
+                        int userId = itemList.get(userIndex);
+                        if (rat[userId][v] != 0) {
                             commonCounter++;
-                            //  System.out.println("movieId: "+ movieId); // common movie they both watched
-                            diff[u][v] += Math.abs(normalize(rat[u][movieId]) - normalize(rat[v][movieId]));
+                            //  System.out.println("userId: "+ userId); // common movie they both watched
+                            diff[u][v] += Math.abs(normalize(rat[userId][u]) - normalize(rat[userId][v]));
                         }
                     }
                     if (commonCounter != 0) {

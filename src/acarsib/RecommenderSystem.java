@@ -791,15 +791,15 @@ public class RecommenderSystem {
     // K-Medoids Clustering
     // ============================================================ //
     void K_MedoidsClustering() throws FileNotFoundException, IOException {
-        boolean[] isUsedCentroid = new boolean[mxuid];
+        boolean[] isUsedCentroid = new boolean[mxmid];
 
-        for (int i = 1; i < mxuid; i++) {
+        for (int i = 1; i < mxmid; i++) {
             isUsedCentroid[i] = false;
         }
 
         clusterCentroids = new ArrayList < Integer > (); // Arraylist of initial centroids
 
-        // Find 61 random centroids (K) within dataset
+        // Find 52 random centroids (K) within dataset
         clusterCentroids = uniqueRandomInRange(clusterCentroids);
 
         for (int i = 0; i < clusterCentroids.size(); i++) {
@@ -811,9 +811,9 @@ public class RecommenderSystem {
         // displayClusterCentroids();
 
         //  Populate each cluster with closest objects to its centroid
-        for (int i = 1; i < mxuid; i++) { // i = current item
+        for (int i = 1; i < mxmid; i++) { // i = current item
             // Check if item itself is centroid
-            // Because sometimes 2 users' diff may be 0.0
+            // Because sometimes 2 items' diff may be 0.0
             boolean isCentroid = false;
             for (int j = 0; j < clusterCentroids.size(); j++) {
                 int centroid = clusterCentroids.get(j);
@@ -830,11 +830,11 @@ public class RecommenderSystem {
                 double distance = 0;
 
                 // finding nearest centroid to i
-                for (int k = 0; k < clusterCentroids.size(); k++) { // Here, clusterCentroids.size() = 61
+                for (int k = 0; k < clusterCentroids.size(); k++) { // Here, clusterCentroids.size() = 52
                     int currentCentroid = clusterCentroids.get(k);
                     distance = diff[i][currentCentroid];
                     if (distance < tempMax) {
-                        tempMax = distance; // tempMax will contain the closest centroid distance from a object
+                        tempMax = distance; // tempMax will contain the closest centroid distance from a item
                         tempCentroid = currentCentroid; // The closest centroid
                     }
                 }
@@ -871,8 +871,8 @@ public class RecommenderSystem {
         while (!allUsedAsCentroid) {
             System.out.println("iteration: " + iterationNum);
 
-            List < List < Integer >> arrayListofTempClusters = new ArrayList < List < Integer >> (mxuid);
-            for (int i = 0; i < mxuid; i++) {
+            List < List < Integer >> arrayListofTempClusters = new ArrayList < List < Integer >> (mxmid);
+            for (int i = 0; i < mxmid; i++) {
                 arrayListofTempClusters.add(new ArrayList < Integer > ());
             }
 
@@ -906,7 +906,7 @@ public class RecommenderSystem {
 
             boolean isUnique = false;
             while (!isUnique) {
-                newRandomCentroid = randSel.nextInt(6040 - 2 + 1) + 2; // rand.nextInt((max - min) + 1) + min;
+                newRandomCentroid = randSel.nextInt(3952 - 1 + 1) + 1; // rand.nextInt((max - min) + 1) + min;
                 if (!isUsedCentroid[newRandomCentroid]) {
                     isUsedCentroid[newRandomCentroid] = true;
                     isUnique = true;
@@ -926,9 +926,9 @@ public class RecommenderSystem {
             // }
 
             //  Populate each cluster with closest objects to its centroid
-            for (int i = 1; i < mxuid; i++) { // i = current item
+            for (int i = 1; i < mxmid; i++) { // i = current item
                 // Check if item itself is centroid
-                // Because sometimes 2 users' diff may be 0.0
+                // Because sometimes 2 items' diff may be 0.0
                 boolean isNewCentroid = false;
                 for (int j = 0; j < tempClusterCentroids.size(); j++) {
                     int centroid = tempClusterCentroids.get(j);
@@ -945,7 +945,7 @@ public class RecommenderSystem {
                     double distance = 0;
 
                     // finding nearest centroid to i
-                    for (int k = 0; k < tempClusterCentroids.size(); k++) { // Here, tempClusterCentroids.size() = 61
+                    for (int k = 0; k < tempClusterCentroids.size(); k++) { // Here, tempClusterCentroids.size() = 52
                         int currentCentroid = tempClusterCentroids.get(k);
                         distance = diff[i][currentCentroid];
                         if (distance < tempMax) {
@@ -998,7 +998,7 @@ public class RecommenderSystem {
 
             // check if all users are used centroid
             int usedAsCentroidCount = 0;
-            for (int i = 1; i < mxuid; i++) {
+            for (int i = 1; i < mxmid; i++) {
                 if (!isUsedCentroid[i]) { // if any user not yet used as centroid
                     usedAsCentroidCount = 1;
                     break;
@@ -1019,9 +1019,9 @@ public class RecommenderSystem {
         displayClusters();
         System.out.println("Final Cost: " + oldCost);
 
-        // Filling the MATRIX after K-Medoids
-        fillMatrix();
-        displayMatrix();
+        // // Filling the MATRIX after K-Medoids
+        // fillMatrix();
+        // displayMatrix();
     }
 
 

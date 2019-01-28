@@ -28,7 +28,7 @@ public class acarsib {
 
         ////rs.missingUid();
 
-        //rs.K_MeansClustering();
+        rs.K_MeansClustering();
         //rs.K_MedoidsClustering();
         ////rs.DBSCANClustering();
         ////rs.MeanShiftClustering();
@@ -40,5 +40,14 @@ public class acarsib {
         ////rs.displayMatrix();
         ////rs.fillMatrixRandom();
         //rs.calculateAMAE();
+
+
+//        //// for debugging purpose
+//        rs.distanceCalculator(82, 83);
+//        rs.distanceCalculator(82, 325);
+//        rs.distanceCalculator(82, 414);
+//        rs.distanceCalculator(190, 414);
+//        rs.distanceCalculator(83, 602);
+//        rs.distanceCalculator(83, 747);
     }
 }

@@ -23,10 +23,11 @@ public class RecommenderSystem {
     int mxuid = 6041;
 
 //    List < List < Integer >> userCluster = new ArrayList < List < Integer >> (mxuid);
-    List < List < Integer >> itemCluster = new ArrayList < List < Integer >> (mxuid);
+    List < List < Integer >> itemCluster = new ArrayList < List < Integer >> (mxmid);
 //    List < List < Integer >> userClusterTest = new ArrayList < List < Integer >> (mxuid);
-    List < List < Integer >> itemClusterTest = new ArrayList < List < Integer >> (mxuid);
-    List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
+    List < List < Integer >> itemClusterTest = new ArrayList < List < Integer >> (mxmid);
+//    List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxuid);
+    List < List < Integer >> arrayListofClusters = new ArrayList < List < Integer >> (mxmid);
 
     Map < String, Integer > m = new TreeMap < String, Integer > ();
 
@@ -62,7 +63,6 @@ public class RecommenderSystem {
     }
 
     void init() {
-
 //        for (int i = 0; i < mxuid; i++) {
 //            userCluster.add(new ArrayList < Integer > ());
 //        }
@@ -75,8 +75,10 @@ public class RecommenderSystem {
         for (int i = 0; i < mxmid; i++) {
             itemClusterTest.add(new ArrayList < Integer > ());
         }
-
-        for (int i = 0; i < mxuid; i++) {
+//        for (int i = 0; i < mxuid; i++) {
+//            arrayListofClusters.add(new ArrayList < Integer > ());
+//        }
+        for (int i = 0; i < mxmid; i++) {
             arrayListofClusters.add(new ArrayList < Integer > ());
         }
     }
@@ -536,30 +538,30 @@ public class RecommenderSystem {
         System.out.println("Distance between " + u + " and " + v + " is " + diff[u][v]);
     }
 
-    // Choose random 1 centroid from every 100 objects orderly. 6040 users So, K = 61
+    // Choose random 1 centroid from every 76 objects orderly. 3952 users So, K = 52
     ArrayList < Integer > randomInRange(ArrayList < Integer > clusterCentroids) {
         Random r = new Random();
-        for (int userId = 1; userId + 100 < mxuid; userId = userId + 100) {
-            int Low = userId;
-            int High = userId + 100;
+        for (int movieId = 1; movieId + 76 <= mxmid; movieId = movieId + 76) {
+            int Low = movieId;
+            int High = movieId + 76;
             int Result = r.nextInt(High - Low + 1) + Low; // rand.nextInt((max - min) + 1) + min;
             clusterCentroids.add(Result);
         }
-        // As, 6001-6040 there is only 40 objects
-        int Low = 6001;
-        int High = 6040;
-        int Result = r.nextInt(High - Low + 1) + Low;
-        clusterCentroids.add(Result);
+//        // As, 6001-6040 there is only 40 objects
+//        int Low = 6001;
+//        int High = 6040;
+//        int Result = r.nextInt(High - Low + 1) + Low;
+//        clusterCentroids.add(Result);
 
         return clusterCentroids;
     }
 
-    // Choose K unique centroids randomly from the dataset. Here K = 61
+    // Choose K unique centroids randomly from the dataset. Here K = 52
     ArrayList < Integer > uniqueRandomInRange(ArrayList < Integer > clusterCentroids) {
-        int numofCluster = 61;
+        int numofCluster = 52;
         Random rand = new Random();
         while (numofCluster > 0) {
-            int n = rand.nextInt(6040 - 1 + 1) + 1; // rand.nextInt((max - min) + 1) + min;
+            int n = rand.nextInt(3952 - 1 + 1) + 1; // rand.nextInt((max - min) + 1) + min;
             if (clusterCentroids.size() == 0) {
                 clusterCentroids.add(n);
                 numofCluster--;
@@ -611,16 +613,16 @@ public class RecommenderSystem {
     // ============================================================ //
     void K_MeansClustering() throws FileNotFoundException, IOException {
         clusterCentroids = new ArrayList < Integer > ();
-        // Choosing 1 centroid from every 100 objects orderly.
+        // Choosing 1 centroid from every 76 objects orderly.
         clusterCentroids = randomInRange(clusterCentroids);
 
-        // Display randomly choosen centroids (K = 61)
+        // Display randomly choosen centroids (K = 52)
         displayClusterCentroids();
 
-        //  Populate each cluster with closest objects to its centroid
-        for (int i = 1; i < mxuid; i++) { // i = current item
+        //  Populate each cluster with closest items to its centroid
+        for (int i = 1; i < mxmid; i++) { // i = current item
             // Check if item itself is centroid
-            // Because sometimes 2 users' diff may be 0.0
+            // Because sometimes 2 items' diff may be 0.0
             boolean isCentroid = false;
             for (int j = 0; j < clusterCentroids.size(); j++) {
                 int centroid = clusterCentroids.get(j);
@@ -637,11 +639,11 @@ public class RecommenderSystem {
                 double distance = 0;
 
                 // finding nearest centroid to i
-                for (int k = 0; k < clusterCentroids.size(); k++) { // Here, clusterCentroids.size() = 61
+                for (int k = 0; k < clusterCentroids.size(); k++) { // Here, clusterCentroids.size() = 52
                     int currentCentroid = clusterCentroids.get(k);
                     distance = diff[i][currentCentroid];
                     if (distance < tempMax) {
-                        tempMax = distance; // tempMax will contain the closest centroid distance from a object
+                        tempMax = distance; // tempMax will contain the closest centroid distance from a item
                         tempCentroid = currentCentroid; // The closest centroid
                     }
                 }
@@ -682,8 +684,8 @@ public class RecommenderSystem {
         int iterator = 1;
 
         do {
-            List < List < Integer >> arrayListofTempClusters = new ArrayList < List < Integer >> (mxuid);
-            for (int i = 0; i < mxuid; i++) {
+            List < List < Integer >> arrayListofTempClusters = new ArrayList < List < Integer >> (mxmid);
+            for (int i = 0; i < mxmid; i++) {
                 arrayListofTempClusters.add(new ArrayList < Integer > ());
             }
             newClusterCentroids = new ArrayList < Integer > ();
@@ -713,9 +715,9 @@ public class RecommenderSystem {
             oldClusterCentroids = clusterCentroids;
 
             // For new centroids: Again populating each cluster with closest objects to its centroid
-            for (int i = 1; i < mxuid; i++) { // i = current item
+            for (int i = 1; i < mxmid; i++) { // i = current item
                 // Check if item itself is centroid
-                // Because sometimes 2 users' diff may be 0.0
+                // Because sometimes 2 items' diff may be 0.0
                 boolean isNewCentroid = false;
                 for (int j = 0; j < newClusterCentroids.size(); j++) {
                     int centroid = newClusterCentroids.get(j);
@@ -732,11 +734,11 @@ public class RecommenderSystem {
                     double distance = 0;
 
                     // for newCentroids, finding nearest centroid to i
-                    for (int k = 0; k < newClusterCentroids.size(); k++) { // Here, newClusterCentroids.size() = 61
+                    for (int k = 0; k < newClusterCentroids.size(); k++) { // Here, newClusterCentroids.size() = 52
                         int currentCentroid = newClusterCentroids.get(k);
                         distance = diff[i][currentCentroid];
                         if (distance < tempMax) {
-                            tempMax = distance; // tempMax will contain the closest centroid distance from a object
+                            tempMax = distance; // tempMax will contain the closest centroid distance from a item
                             tempCentroid = currentCentroid; // The closest centroid
                         }
                     }
@@ -779,9 +781,9 @@ public class RecommenderSystem {
         }
         System.out.println("\n Total Objects: " + totalObjects);
 
-        // Filling the MATRIX after K-Means
-        fillMatrix();
-        displayMatrix();
+        // // Filling the MATRIX after K-Means
+        // fillMatrix();
+        // displayMatrix();
     }
 
 

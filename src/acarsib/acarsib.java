@@ -18,9 +18,9 @@ public class acarsib {
      */
     public static void main(String[] args) throws IOException {
         // TODO code application logic here
-        String pathPrefix = "F:\\ThesisPaper\\datasets\\90_10\\";
-        String inputPathPrefix = "F:\\ThesisPaper\\datasets\\90_10\\";
-        String outputPathPrefix = "F:\\ThesisPaper\\datasets\\90_10\\";
+        String pathPrefix = "F:\\itembasedRS\\datasets\\90_10\\";
+        String inputPathPrefix = "F:\\itembasedRS\\datasets\\90_10\\";
+        String outputPathPrefix = "F:\\itembasedRS\\datasets\\90_10\\";
         String prefix = outputPathPrefix;
         RecommenderSystem rs = new RecommenderSystem(pathPrefix, inputPathPrefix, outputPathPrefix);
         rs.takeTrainData();
@@ -29,25 +29,16 @@ public class acarsib {
         ////rs.missingUid();
 
         //rs.K_MeansClustering();
-        rs.K_MedoidsClustering();
+        //rs.K_MedoidsClustering();
         ////rs.DBSCANClustering();
         ////rs.MeanShiftClustering();
         //rs.DivisiveClustering();
         //rs.SingleLinkageClustering();
         //rs.CompleteLinkageClustering();
-        //rs.AverageLinkageClustering();
+        rs.AverageLinkageClustering();
 
         ////rs.displayMatrix();
         ////rs.fillMatrixRandom();
-        //rs.calculateAMAE();
-
-
-//        //// for debugging purpose
-//        rs.distanceCalculator(82, 83);
-//        rs.distanceCalculator(82, 325);
-//        rs.distanceCalculator(82, 414);
-//        rs.distanceCalculator(190, 414);
-//        rs.distanceCalculator(83, 602);
-//        rs.distanceCalculator(83, 747);
+        rs.calculateAMAE();
     }
 }

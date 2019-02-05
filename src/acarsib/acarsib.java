@@ -28,17 +28,17 @@ public class acarsib {
 
         ////rs.missingUid();
 
-        //rs.K_MeansClustering();
+        rs.K_MeansClustering();
         //rs.K_MedoidsClustering();
         ////rs.DBSCANClustering();
         ////rs.MeanShiftClustering();
         //rs.DivisiveClustering();
         //rs.SingleLinkageClustering();
         //rs.CompleteLinkageClustering();
-        rs.AverageLinkageClustering();
+        //rs.AverageLinkageClustering();
 
         ////rs.displayMatrix();
         ////rs.fillMatrixRandom();
-        rs.calculateAMAE();
+        //rs.calculateAMAE();
     }
 }

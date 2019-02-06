@@ -204,171 +204,171 @@ public class RecommenderSystem {
         return avgRat + itemAvg[m];
     }
 
-    //    void calculateAMAE() throws FileNotFoundException, IOException {
-    //        PrintWriter out2 = new PrintWriter(new FileWriter(outputPathPrefix + "ResultData.csv"));
-    //        PrintWriter out3 = new PrintWriter(new FileWriter(outputPathPrefix + "calculatedARHR.csv"));
-    //
-    //        int neighbor = 640;
-    //        int friend = 0;
-    //        double precisionUp = 0, precisionLow = 0, precision = 0, coverage = 0, coverageUp = 0, coverageLow = 0;
-    //        double recallUp = 0, recallLow = 0, recall = 0;
-    //        double arhrUp = 0, arhrLow = 0, arhr = 0;
-    //        for (friend = 120; friend <= neighbor; friend += 10) {
-    //            itemFlag = new boolean[maxmid + 1];
-    //            // double globalErrorSum = 0;
-    //            //System.out.println("for : "+friend );
-    //            precisionUp = 0;
-    //            precisionLow = 0;
-    //            precision = 0;
-    //            recallUp = 0;
-    //            recallLow = 0;
-    //            recall = 0;
-    //            coverageUp = 0;
-    //            coverageLow = 0;
-    //            coverage = 0;
-    //            arhrUp = 0;
-    //            arhrLow = 0;
-    //            double globalRoundingErrorSum = 0;
-    //            for (int item = 1; item < maxmid; item++) {
-    //                List < Integer > itemsList = itemClusterTest.get(item);
-    //                Integer oneUserItemsSize = itemsList.size();
-    //                for (Integer index = 0; index < oneUserItemsSize; index++) {
-    //                    int items = itemsList.get(index);
-    //                    coverageLow++;
-    //                    // double predictedRating = normalizedRating(users, items, friend);
-    //                    double predictedRating = 0;
-    //
-    //                    int predictedRounding = 0;
-    //                    predictedRating = normalizedRatingBestNeighbor(user, items, friend);
-    //                    // System.out.println(Rat[user][items] + " , " + predictedRating);
-    //
-    //                    // globalRoundingErrorSum += Math.abs(Rat[user][items] - predictedRating);
-    //                    /*
-    //                    if (litmus == false) {
-    //                        predictedRating = normalizedRatingBestNeighbor(user, items, friend);
+    void calculateAMAE() throws FileNotFoundException, IOException {
+        PrintWriter out2 = new PrintWriter(new FileWriter(outputPathPrefix + "ResultData.csv"));
+        PrintWriter out3 = new PrintWriter(new FileWriter(outputPathPrefix + "calculatedARHR.csv"));
+
+        int neighbor = 640;
+        int friend = 0;
+        double precisionUp = 0, precisionLow = 0, precision = 0, coverage = 0, coverageUp = 0, coverageLow = 0;
+        double recallUp = 0, recallLow = 0, recall = 0;
+        double arhrUp = 0, arhrLow = 0, arhr = 0;
+        for (friend = 120; friend <= neighbor; friend += 10) {
+            itemFlag = new boolean[maxmid + 1];
+            // double globalErrorSum = 0;
+            //System.out.println("for : "+friend );
+            precisionUp = 0;
+            precisionLow = 0;
+            precision = 0;
+            recallUp = 0;
+            recallLow = 0;
+            recall = 0;
+            coverageUp = 0;
+            coverageLow = 0;
+            coverage = 0;
+            arhrUp = 0;
+            arhrLow = 0;
+            double globalRoundingErrorSum = 0;
+            for (int item = 1; item < maxmid; item++) {
+                List < Integer > usersList = itemClusterTest.get(item);
+                Integer oneItemUsersSize = usersList.size();
+                for (Integer index = 0; index < oneItemUsersSize; index++) {
+                    int users = usersList.get(index);
+                    coverageLow++;
+                    // double predictedRating = normalizedRating(users, items, friend);
+                    double predictedRating = 0;
+
+                    int predictedRounding = 0;
+                    predictedRating = normalizedRatingBestNeighbor(item, users, friend);
+                    // System.out.println(Rat[user][items] + " , " + predictedRating);
+
+                    // globalRoundingErrorSum += Math.abs(Rat[user][items] - predictedRating);
+                    /*
+                        if (litmus == false) {
+                            predictedRating = normalizedRatingBestNeighbor(user, items, friend);
+                            predictedRounding = (int) predictedRating;
+                            if ((predictedRating - predictedRounding) >= 0.5) {
+                                predictedRounding++;
+                            }
+                            predictedRating = predictedRounding;
+                            predRat[user][items] = predictedRating;
+                        } else {
+                            predictedRating = normalizedRatingBestNeighborGeneralized(user, items, friend);
     //                        predictedRounding = (int) predictedRating;
     //                        if ((predictedRating - predictedRounding) >= 0.5) {
     //                            predictedRounding++;
     //                        }
-    //                        predictedRating = predictedRounding;
-    //                        predRat[user][items] = predictedRating;
-    //                    } else {
-    //                        predictedRating = normalizedRatingBestNeighborGeneralized(user, items, friend);
-    ////                        predictedRounding = (int) predictedRating;
-    ////                        if ((predictedRating - predictedRounding) >= 0.5) {
-    ////                            predictedRounding++;
-    ////                        }
-    //                        // predictedRating = predictedRounding;
-    //                        predRat[user][items] = predictedRating;
-    //                    }
-    //
-    //                     */
-    //
-    //                    // globalErrorSum += Math.abs(Rat[users][item] - predictedRating);
-    //                    if (predictedRating != -1) {
-    //                        coverageUp++;
-    //
-    //                        // TP
-    //                        if (Rat[user][items] > 2 && predictedRating > 2) {
-    //                            precisionUp++;
-    //                            precisionLow++;
-    //                            recallUp++;
-    //                            recallLow++;
+                            // predictedRating = predictedRounding;
+                            predRat[user][items] = predictedRating;
+                        }
+
+                         */
+
+                    // globalErrorSum += Math.abs(Rat[users][item] - predictedRating);
+                    if (predictedRating != -1) {
+                        coverageUp++;
+
+                        // TP
+                        if (Rat[item][users] > 2 && predictedRating > 2) {
+                            precisionUp++;
+                            precisionLow++;
+                            recallUp++;
+                            recallLow++;
+                        }
+                        // FP
+                        if (Rat[item][users] < 3 && predictedRating > 2) {
+                            precisionLow++;
+                        }
+                        // FN
+                        if (Rat[item][users] > 2 && predictedRating < 3) {
+                            recallLow++;
+                        }
+
+                        //System.out.println(Rat[users][items] + "   " + predictedRating);
+                        //out2.println(Rat[users][items] + "   " + predictedRounding);
+                        globalRoundingErrorSum += Math.abs(Rat[item][users] - predictedRating);
+                    }
+
+                }
+            }
+            // double AMAE = globalErrorSum / totalRat;
+            double AMAE2 = globalRoundingErrorSum / totalRat;
+            precision = precisionUp / precisionLow;
+            recall = recallUp / recallLow;
+            coverage = coverageUp / coverageLow;
+            double f2measures = (2 * precision * recall) / (precision + recall);
+            //out.println("AMAE is without rounding  : " + AMAE);
+            out2.println(friend + "," + AMAE2 + "," + precision + "," + recall + "," + f2measures + "," + coverage);
+            out2.println();
+            out2.println();
+            System.out.println(friend + "," + AMAE2 + "," + precision + "," + recall + "," + f2measures + "," + coverage);
+            //out.flush();
+            //out.close();
+            out2.flush();
+        }
+
+        /*
+            Double[] rr;
+            for (int topK = 2; topK <= 20; topK++) {
+
+                for (int items = 1; items <= maxuid; items++) {
+                    List<Integer> usersList = itemClusterTest.get(items);
+                    Integer oneItemUsersSize = usersList.size();
+
+                    //sort start
+                    rr = new Double[oneItemUsersSize];
+                    //curr[0] = -1.0;
+                    for (Integer in = 0; in < oneItemUsersSize; in++) {
+                        int us = usersList.get(in);
+
+                        rr[in] = (-1.0) * Rat[us][items];
+
+                    }
+                    comparator = new ArrayIndexComparator(rr);
+                    indexes = comparator.createIndexArray();
+                    Arrays.sort(indexes, comparator);
+
+                    //sort end
+                    for (Integer index = 0, top = 0; index < oneItemUsersSize && top < topK; index++, top++) {
+                        int users = usersList.get(index);
+
+                        int ii = indexes[top];
+
+                        if (Rat[users][ii] == 5 && predRat[users][ii] == 5) {
+                            arhrUp += 1 / (double) (top + 1);
+                        }
+    //                        else if (Rat[users][ii] == 5 && predRat[users][ii] == 4) {
+    //                            arhrUp += (1 / (double)(top+1));
     //                        }
-    //                        // FP
-    //                        if (Rat[user][items] < 3 && predictedRating > 2) {
-    //                            precisionLow++;
+    //                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 5) {
+    //                            arhrUp += (1 / (double)(top+1));
     //                        }
-    //                        // FN
-    //                        if (Rat[user][items] > 2 && predictedRating < 3) {
-    //                            recallLow++;
+    //                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 4) {
+    //                            arhrUp += 1 / (double)(top+1);
     //                        }
-    //
-    //                        //System.out.println(Rat[users][items] + "   " + predictedRating);
-    //                        //out2.println(Rat[users][items] + "   " + predictedRounding);
-    //                        globalRoundingErrorSum += Math.abs(Rat[user][items] - predictedRating);
-    //                    }
-    //
-    //                }
-    //            }
-    //            // double AMAE = globalErrorSum / totalRat;
-    //            double AMAE2 = globalRoundingErrorSum / totalRat;
-    //            precision = precisionUp / precisionLow;
-    //            recall = recallUp / recallLow;
-    //            coverage = coverageUp / coverageLow;
-    //            double f2measures = (2 * precision * recall) / (precision + recall);
-    //            //out.println("AMAE is without rounding  : " + AMAE);
-    //            out2.println(friend + "," + AMAE2 + "," + precision + "," + recall + "," + f2measures + "," + coverage);
-    //            out2.println();
-    //            out2.println();
-    //            System.out.println(friend + "," + AMAE2 + "," + precision + "," + recall + "," + f2measures + "," + coverage);
-    //            //out.flush();
-    //            //out.close();
-    //            out2.flush();
-    //        }
-    //
-    //        /*
-    //        Double[] rr;
-    //        for (int topK = 2; topK <= 20; topK++) {
-    //
-    //            for (int items = 1; items <= maxuid; items++) {
-    //                List<Integer> usersList = itemClusterTest.get(items);
-    //                Integer oneItemUsersSize = usersList.size();
-    //
-    //                //sort start
-    //                rr = new Double[oneItemUsersSize];
-    //                //curr[0] = -1.0;
-    //                for (Integer in = 0; in < oneItemUsersSize; in++) {
-    //                    int us = usersList.get(in);
-    //
-    //                    rr[in] = (-1.0) * Rat[us][items];
-    //
-    //                }
-    //                comparator = new ArrayIndexComparator(rr);
-    //                indexes = comparator.createIndexArray();
-    //                Arrays.sort(indexes, comparator);
-    //
-    //                //sort end
-    //                for (Integer index = 0, top = 0; index < oneItemUsersSize && top < topK; index++, top++) {
-    //                    int users = usersList.get(index);
-    //
-    //                    int ii = indexes[top];
-    //
-    //                    if (Rat[users][ii] == 5 && predRat[users][ii] == 5) {
-    //                        arhrUp += 1 / (double) (top + 1);
-    //                    }
-    ////                        else if (Rat[users][ii] == 5 && predRat[users][ii] == 4) {
-    ////                            arhrUp += (1 / (double)(top+1));
-    ////                        }
-    ////                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 5) {
-    ////                            arhrUp += (1 / (double)(top+1));
-    ////                        }
-    ////                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 4) {
-    ////                            arhrUp += 1 / (double)(top+1);
-    ////                        }
-    ////                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 4) {
-    ////                            arhrUp += (1);
-    ////                        }
-    //                    //else if (Rat[users][ii] == 4 && predRat[users][ii] == 3) {
-    ////                            arhrUp += (1 / 3);
-    ////                        }
-    //
-    //                }
-    //                arhr += arhrUp / topK;
-    //                //out3.prinln(topK+",");
-    //            }
-    //            arhr = arhr / maxuid;
-    //            System.out.println(topK + "," + arhr);
-    //            out3.println(topK + "," + arhr);
-    //            arhr = 0;
-    //        }
-    //
-    //         */
-    //        out2.close();
-    //        out3.flush();
-    //        out3.close();
-    //
-    //    }
+    //                        else if (Rat[users][ii] == 4 && predRat[users][ii] == 4) {
+    //                            arhrUp += (1);
+    //                        }
+                        //else if (Rat[users][ii] == 4 && predRat[users][ii] == 3) {
+    //                            arhrUp += (1 / 3);
+    //                        }
+
+                    }
+                    arhr += arhrUp / topK;
+                    //out3.prinln(topK+",");
+                }
+                arhr = arhr / maxuid;
+                System.out.println(topK + "," + arhr);
+                out3.println(topK + "," + arhr);
+                arhr = 0;
+            }
+
+             */
+        out2.close();
+        out3.flush();
+        out3.close();
+
+    }
 
     // initial matrix
     void initFillMatrix() {

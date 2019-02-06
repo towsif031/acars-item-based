@@ -39,6 +39,6 @@ public class acarsib {
 
         ////rs.displayMatrix();
         ////rs.fillMatrixRandom();
-        //rs.calculateAMAE();
+        rs.calculateAMAE();
     }
 }

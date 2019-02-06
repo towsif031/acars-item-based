@@ -494,14 +494,14 @@ public class RecommenderSystem {
                 for (int v = 1; v < maxmid; v++) {
                     //if (itemCluster.get(u).size() != 0 && itemCluster.get(v).size() != 0) {
                     List < Integer > itemList = itemCluster.get(u);
-                    int itemSize = itemList.size();
+                    int userSize = itemList.size();
                     int commonCounter = 0;
-                    for (int movieIndex = 0; movieIndex < itemSize; movieIndex++) {
-                        int movieId = itemList.get(movieIndex);
-                        if (rat[v][movieId] != 0) {
+                    for (int userIndex = 0; userIndex < userSize; userIndex++) {
+                        int userId = itemList.get(userIndex);
+                        if (rat[v][userId] != 0) {
                             commonCounter++;
-                            //  System.out.println("movieId: "+ movieId); // common movie they both watched
-                            diff[u][v] += Math.abs(normalize(rat[u][movieId]) - normalize(rat[v][movieId]));
+                            //  System.out.println("userId: "+ userId); // common movie they both watched
+                            diff[u][v] += Math.abs(normalize(rat[u][userId]) - normalize(rat[v][userId]));
                         }
                     }
                     if (commonCounter != 0) {
@@ -544,9 +544,9 @@ public class RecommenderSystem {
         return clusterCentroids;
     }
 
-    // Choose K unique centroids randomly from the dataset. Here K = 61
+    // Choose K unique centroids randomly from the dataset. Here K = 40
     ArrayList < Integer > uniqueRandomInRange(ArrayList < Integer > clusterCentroids) {
-        int numofCluster = 61;
+        int numofCluster = 40;
         Random rand = new Random();
         while (numofCluster > 0) {
             int n = rand.nextInt(3952 - 1 + 1) + 1; // rand.nextInt((max - min) + 1) + min;
@@ -787,7 +787,7 @@ public class RecommenderSystem {
 
         clusterCentroids = new ArrayList < Integer > (); // Arraylist of initial centroids
 
-        // Find 61 random centroids (K) within dataset
+        // Find 40 random centroids (K) within dataset
         clusterCentroids = uniqueRandomInRange(clusterCentroids);
 
         for (int i = 0; i < clusterCentroids.size(); i++) {
@@ -818,7 +818,7 @@ public class RecommenderSystem {
                 double distance = 0;
 
                 // finding nearest centroid to i
-                for (int k = 0; k < clusterCentroids.size(); k++) { // Here, clusterCentroids.size() = 61
+                for (int k = 0; k < clusterCentroids.size(); k++) { // Here, clusterCentroids.size() = 40
                     int currentCentroid = clusterCentroids.get(k);
                     distance = diff[i][currentCentroid];
                     if (distance < tempMax) {
@@ -872,7 +872,7 @@ public class RecommenderSystem {
 
             // New clusterCentroids after removing randomly choosen centroid
             ArrayList < Integer > tempClusterCentroids = new ArrayList < Integer > ();
-            for (int i = 0; i < clusterCentroids.size(); i++) { // Here, clusterCentroids.size() = 61
+            for (int i = 0; i < clusterCentroids.size(); i++) { // Here, clusterCentroids.size() = 40
                 int currentCentroid = clusterCentroids.get(i);
                 if (currentCentroid != randomSelectedCentroid) {
                     tempClusterCentroids.add(currentCentroid);
@@ -933,7 +933,7 @@ public class RecommenderSystem {
                     double distance = 0;
 
                     // finding nearest centroid to i
-                    for (int k = 0; k < tempClusterCentroids.size(); k++) { // Here, tempClusterCentroids.size() = 61
+                    for (int k = 0; k < tempClusterCentroids.size(); k++) { // Here, tempClusterCentroids.size() = 40
                         int currentCentroid = tempClusterCentroids.get(k);
                         distance = diff[i][currentCentroid];
                         if (distance < tempMax) {
@@ -995,6 +995,10 @@ public class RecommenderSystem {
 
             if (usedAsCentroidCount == 0) {
                 allUsedAsCentroid = true;
+            }
+
+            if (iterationNum == 3911) {
+                break;
             }
 
             iterationNum++;

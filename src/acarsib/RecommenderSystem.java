@@ -140,17 +140,17 @@ public class RecommenderSystem {
     //     }
     // }
 
-    double normalizedRatingBestNeighbor(int u, int m, int neighbour) {
+    double normalizedRatingBestNeighbor(int m, int u, int neighbour) {
         double S = 0, T = 0;
 
-        if (itemFlag[u] == false) {
-            itemFlag[u] = true;
+        if (itemFlag[m] == false) {
+            itemFlag[m] = true;
             curr = new Double[maxmid];
             curr[0] = -1.0;
             curr[1] = -1.0;
             for (int i = 1; i < maxmid; i++) {
                 //curr[1] missing
-                curr[i] = (-1.0) * matrix[u][i];
+                curr[i] = (-1.0) * matrix[m][i];
             }
             comparator = new ArrayIndexComparator(curr);
             indexes = comparator.createIndexArray();
@@ -161,7 +161,7 @@ public class RecommenderSystem {
 
         for (int i = 0; i < neighbour; i++) {
 
-            if (rat[indexes[i]][m] != 0 && indexes[i] != u) {
+            if (rat[indexes[i]][u] != 0 && indexes[i] != m) {
                 closeCounter++;
                 //                if (itemItemScore[m][indexes[i]] != 0) {
                 //                    S += itemItemScore[m][indexes[i]] * (rat[u][indexes[i]] - itemAvg[indexes[i]]);
@@ -170,9 +170,9 @@ public class RecommenderSystem {
                 //                    S += itemItemScore[indexes[i]][m] * (rat[u][indexes[i]] - itemAvg[indexes[i]]);
                 //                    T += itemItemScore[indexes[i]][m];
                 //                }
-                if (matrix[u][indexes[i]] != 0) {
-                    S += matrix[u][indexes[i]] * (rat[indexes[i]][m] - itemAvg[indexes[i]]);
-                    T += matrix[u][indexes[i]];
+                if (matrix[m][indexes[i]] != 0) {
+                    S += matrix[m][indexes[i]] * (rat[indexes[i]][u] - itemAvg[indexes[i]]);
+                    T += matrix[m][indexes[i]];
                 }
             }
             //            if (rat[u][indexes[i]] != 0 && indexes[i] != m) {
@@ -195,13 +195,13 @@ public class RecommenderSystem {
         }
         double avgRat = S / T;
 
-        if ((avgRat + itemAvg[u]) < 0) {
+        if ((avgRat + itemAvg[m]) < 0) {
             return 1;
         }
-        if (avgRat + itemAvg[u] > 5) {
+        if (avgRat + itemAvg[m] > 5) {
             return 5;
         }
-        return avgRat + itemAvg[u];
+        return avgRat + itemAvg[m];
     }
 
     //    void calculateAMAE() throws FileNotFoundException, IOException {

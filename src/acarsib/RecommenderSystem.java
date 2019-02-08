@@ -298,10 +298,10 @@ public class RecommenderSystem {
             coverage = coverageUp / coverageLow;
             double f2measures = (2 * precision * recall) / (precision + recall);
             //out.println("AMAE is without rounding  : " + AMAE);
-            out2.println(friend + "," + AMAE2 + "," + precision + "," + recall + "," + f2measures + "," + coverage);
+            out2.println(friend + ", " + AMAE2 + ", " + precision + ", " + recall + ", " + f2measures + ", " + coverage);
             out2.println();
             out2.println();
-            System.out.println(friend + "," + AMAE2 + "," + precision + "," + recall + "," + f2measures + "," + coverage);
+            System.out.println(friend + ", " + AMAE2 + ", " + precision + ", " + recall + ", " + f2measures + ", " + coverage);
             //out.flush();
             //out.close();
             out2.flush();
@@ -1424,7 +1424,7 @@ public class RecommenderSystem {
         ArrayList < Integer > tempClusterX = new ArrayList < Integer > ();
         ArrayList < Integer > tempClusterY = new ArrayList < Integer > ();
 
-        // finding 2 most furthest items in the cluster
+        // finding 2 most furthest users in the cluster
         double maxDistance = 0;
         double distance = 0;
         int x = 0;
@@ -1441,13 +1441,15 @@ public class RecommenderSystem {
         }
 
         ////// for debugging purpose
-        System.out.println("2 most furthest items are: " + x + " and " + y);
+        System.out.println("2 most furthest users are: " + x + " and " + y);
 
         for (int i = 1; i < maxmid; i++) {
             if (diff[i][x] <= diff[i][y]) {
                 arrayListofTempClusters.get(x).add(i);
+                System.out.println(arrayListofTempClusters.get(x).get(i)); ///
             } else {
                 arrayListofTempClusters.get(y).add(i);
+                System.out.println(arrayListofTempClusters.get(y).get(i)); ///
             }
         }
 
@@ -1474,10 +1476,10 @@ public class RecommenderSystem {
         //  number of clusters will be max iterations + 1
         for (int iterator = 1; iterator < 60; iterator++) { // we will get 61 clusters
             maxDistance = 0;
-            int clusterToDiv = 0; // the cluster where we found the 2 most furthest items. So we can devide that
+            int clusterToDiv = 0; // the cluster where we found the 2 most furthest users. So we can devide that
 
             for (int i = 0; i < arrayListofTempClusters.size(); i++) { // finding in all clusters
-                // finding 2 most furthest items in current cluster
+                // finding 2 most furthest users in current cluster
                 for (int j = 0; j < arrayListofTempClusters.get(i).size(); j++) {
                     int m = arrayListofTempClusters.get(i).get(j);
                     for (int k = j + 1; k < arrayListofTempClusters.get(i).size(); k++) {
@@ -1494,7 +1496,7 @@ public class RecommenderSystem {
             }
 
             ////// for debugging purpose
-            System.out.println("2 most furthest items are: " + x + " and " + y);
+            System.out.println("2 most furthest users are: " + x + " and " + y);
 
             for (int i = 0; i < arrayListofTempClusters.get(clusterToDiv).size(); i++) {
                 int o = arrayListofTempClusters.get(clusterToDiv).get(i);
@@ -1586,76 +1588,78 @@ public class RecommenderSystem {
         //        //            }
         //        //        }
         //        displayMatrix();
+
+
         // The MATRIX to fill after every clustering
-        File file = new File("F:/itembasedRS/datasets/90_10/itemMatrix.csv");
-        boolean exists = file.exists();
-        if (!exists) {
-            System.out.println("[itemMatrix.csv] File Does Not Exist!");
+        // File file = new File("F:/itembasedRS/datasets/90_10/itemMatrix.csv");
+        // boolean exists = file.exists();
+        // if (!exists) {
+        //     System.out.println("[itemMatrix.csv] File Does Not Exist!");
 
-            // writing itemMatrix.csv
-            PrintWriter out1 = new PrintWriter(new FileWriter(outputPathPrefix + "itemMatrix.csv"));
-            for (int p = 0; p < arrayListofTempClusters.size(); p++) {
-                for (int q = 0; q < arrayListofTempClusters.get(p).size(); q++) {
-                    int m = arrayListofTempClusters.get(p).get(q);
-                    for (int r = 0; r < arrayListofTempClusters.get(p).size(); r++) {
-                        int n = arrayListofTempClusters.get(p).get(r);
-                        matrix[m][n] += 1;
+        //     // writing itemMatrix.csv
+        //     PrintWriter out1 = new PrintWriter(new FileWriter(outputPathPrefix + "itemMatrix.csv"));
+        //     for (int p = 0; p < arrayListofTempClusters.size(); p++) {
+        //         for (int q = 0; q < arrayListofTempClusters.get(p).size(); q++) {
+        //             int m = arrayListofTempClusters.get(p).get(q);
+        //             for (int r = 0; r < arrayListofTempClusters.get(p).size(); r++) {
+        //                 int n = arrayListofTempClusters.get(p).get(r);
+        //                 matrix[m][n] += 1;
 
-                        // save in file
-                        out1.println(m + "," + n + "," + matrix[m][n]);
-                        out1.flush();
-                    }
-                }
-            }
-            out1.close();
-        } else {
-            System.out.println("[itemMatrix.csv] File Exist!");
+        //                 // save in file
+        //                 out1.println(m + "," + n + "," + matrix[m][n]);
+        //                 out1.flush();
+        //             }
+        //         }
+        //     }
+        //     out1.close();
+        // } else {
+        //     System.out.println("[itemMatrix.csv] File Exist!");
 
-            // reading itemMatrix.csv
-            BufferedReader in = new BufferedReader(new FileReader(inputPathPrefix + "itemMatrix.csv"));
-            String text;
-            String[] cut;
-            int i = 0, j = 0;
-            while ((text = in .readLine()) != null) {
-                cut = text.split(",");
-                i = Integer.parseInt(cut[0]);
-                j = Integer.parseInt(cut[1]);
-                matrix[i][j] = Double.parseDouble(cut[2]);
-                System.out.println("Reading...");
-                System.out.println("matrix[" + i + "][" + j + "] = " + matrix[i][j]);
-            }
+        //     // reading itemMatrix.csv
+        //     BufferedReader in = new BufferedReader(new FileReader(inputPathPrefix + "itemMatrix.csv"));
+        //     String text;
+        //     String[] cut;
+        //     int i = 0, j = 0;
+        //     while ((text = in .readLine()) != null) {
+        //         cut = text.split(",");
+        //         i = Integer.parseInt(cut[0]);
+        //         j = Integer.parseInt(cut[1]);
+        //         matrix[i][j] = Double.parseDouble(cut[2]);
+        //         System.out.println("Reading...");
+        //         System.out.println("matrix[" + i + "][" + j + "] = " + matrix[i][j]);
+        //     }
 
-            // updating itemMatrix.csv
-            PrintWriter out2 = new PrintWriter(new FileWriter(outputPathPrefix + "itemMatrix.csv"));
-            for (int p = 0; p < arrayListofTempClusters.size(); p++) {
-                for (int q = 0; q < arrayListofTempClusters.get(p).size(); q++) {
-                    int m = arrayListofTempClusters.get(p).get(q);
-                    for (int r = 0; r < arrayListofTempClusters.get(p).size(); r++) {
-                        int n = arrayListofTempClusters.get(p).get(r);
-                        matrix[m][n] += 1;
+        //     // updating itemMatrix.csv
+        //     PrintWriter out2 = new PrintWriter(new FileWriter(outputPathPrefix + "itemMatrix.csv"));
+        //     for (int p = 0; p < arrayListofTempClusters.size(); p++) {
+        //         for (int q = 0; q < arrayListofTempClusters.get(p).size(); q++) {
+        //             int m = arrayListofTempClusters.get(p).get(q);
+        //             for (int r = 0; r < arrayListofTempClusters.get(p).size(); r++) {
+        //                 int n = arrayListofTempClusters.get(p).get(r);
+        //                 matrix[m][n] += 1;
 
-                        // save update in file
-                        out2.println(m + "," + n + "," + matrix[m][n]);
-                        out2.flush();
+        //                 // save update in file
+        //                 out2.println(m + "," + n + "," + matrix[m][n]);
+        //                 out2.flush();
 
-                        System.out.println();
-                        System.out.println("After updating:");
-                        System.out.println("matrix[" + m + "][" + n + "] = " + matrix[m][n]);
-                    }
-                }
-            }
-            out2.close();
-        }
+        //                 System.out.println();
+        //                 System.out.println("After updating:");
+        //                 System.out.println("matrix[" + m + "][" + n + "] = " + matrix[m][n]);
+        //             }
+        //         }
+        //     }
+        //     out2.close();
+        // }
 
-        System.out.println();
-        System.out.println("display matrix...");
-        for (int i = 1; i < maxmid; i++) {
-            for (int j = 1; j < maxmid; j++) {
-                if (matrix[i][j] > 0) {
-                    System.out.println("matrix[" + i + "][" + j + "] = " + matrix[i][j]);
-                }
-            }
-        }
+        // System.out.println();
+        // System.out.println("display matrix...");
+        // for (int i = 1; i < maxmid; i++) {
+        //     for (int j = 1; j < maxmid; j++) {
+        //         if (matrix[i][j] > 0) {
+        //             System.out.println("matrix[" + i + "][" + j + "] = " + matrix[i][j]);
+        //         }
+        //     }
+        // }
 
     }
 
@@ -1683,7 +1687,7 @@ public class RecommenderSystem {
         }
 
         int numOfClusters = 10000;
-        while (numOfClusters > 6000) { // to get 61 clusters
+        while (numOfClusters > 40) { // to get 40 clusters
             double minDistance = 10000;
             double distance = 0;
             int x = 0;
@@ -1733,6 +1737,22 @@ public class RecommenderSystem {
             System.out.println("Number of Clusters: " + numOfClusters);
         }
 
+        //Display clusters
+        System.out.println("Final Clusters after Single-Linkage:");
+        int totalClusters = 0;
+        for (int i = 0; i < arrayListofTempClusters.size(); i++) {
+            if (arrayListofTempClusters.get(i).size() > 0) {
+                for (int j = 0; j < arrayListofTempClusters.get(i).size(); j++) {
+                    System.out.print(arrayListofTempClusters.get(i).get(j) + ", ");
+                }
+                System.out.println("\n total objects: " + arrayListofTempClusters.get(i).size()); // displays total objects
+                System.out.println();
+                System.out.println("================================");
+                totalClusters++;
+            }
+        }
+        System.out.println("\n total clusters: " + totalClusters);
+
         //        // Add all clusters to arrayListofClusters()
         //        int j = 0;
         //        for (int i = 0; i < arrayListofTempClusters.size(); i++) {
@@ -1776,7 +1796,8 @@ public class RecommenderSystem {
         //        //            }
         //        //        }
         //        displayMatrix();
-        // The MATRIX to fill after every clustering
+
+        // The MATRIX to fill
         File file = new File("F:/itembasedRS/datasets/90_10/itemMatrix.csv");
         boolean exists = file.exists();
         if (!exists) {
@@ -1881,7 +1902,7 @@ public class RecommenderSystem {
         int clusterPositionY = 0;
 
         int numOfClusters = 10000;
-        while (numOfClusters > 6036) { // to get 61 clusters  //61
+        while (numOfClusters > 40) { // to get 40 clusters  //40
             double minOfMax = 10000;
             for (int i = 0; i < arrayListofTempClusters.size(); i++) {
                 for (int p = i + 1; p < arrayListofTempClusters.size(); p++) { /////
@@ -1969,6 +1990,7 @@ public class RecommenderSystem {
         //        // Filling the MATRIX after Complete-Linkage
         //        fillMatrix();
         //        displayMatrix();
+
         // The MATRIX to fill after every clustering
         File file = new File("F:/itembasedRS/datasets/90_10/itemMatrix.csv");
         boolean exists = file.exists();
@@ -2074,7 +2096,7 @@ public class RecommenderSystem {
         int clusterPositionY = 0;
 
         int numOfClusters = 10000;
-        while (numOfClusters > 6036) { // to get 61 clusters  ///61
+        while (numOfClusters > 40) { // to get 40 clusters  ///40
             double minOfAverage = 10000;
             for (int i = 0; i < arrayListofTempClusters.size(); i++) {
                 for (int p = i + 1; p < arrayListofTempClusters.size(); p++) { /////

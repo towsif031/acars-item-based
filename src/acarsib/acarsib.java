@@ -33,7 +33,7 @@ public class acarsib {
         ////rs.DBSCANClustering();
         ////rs.MeanShiftClustering();
         //rs.DivisiveClustering();
-        //rs.SingleLinkageClustering();
+        rs.SingleLinkageClustering();
         //rs.CompleteLinkageClustering();
         //rs.AverageLinkageClustering();
 

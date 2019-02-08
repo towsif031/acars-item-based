@@ -34,7 +34,7 @@ public class acarsib {
         ////rs.MeanShiftClustering();
         //rs.DivisiveClustering();
         rs.SingleLinkageClustering();
-        //rs.CompleteLinkageClustering();
+        rs.CompleteLinkageClustering();
         //rs.AverageLinkageClustering();
 
         ////rs.displayMatrix();

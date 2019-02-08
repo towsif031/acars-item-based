@@ -1971,27 +1971,30 @@ public class RecommenderSystem {
 
         //        arrayListofClusters = arrayListofTempClusters;
         //
-        //        // // Display clusters
-        //        // System.out.println("Final Clusters after Complete-Linkage:");
-        //        // int totalClusters = 0;
-        //        // for (int i = 0; i < arrayListofClusters.size(); i++) {
-        //        //     if (arrayListofClusters.get(i).size() > 0) {
-        //        //         for (int j = 0; j < arrayListofClusters.get(i).size(); j++) {
-        //        //             System.out.print(arrayListofClusters.get(i).get(j) + ", ");
-        //        //         }
-        //        //         System.out.println("\n total objects: " + arrayListofClusters.get(i).size()); // displays total objects
-        //        //         System.out.println();
-        //        //         System.out.println("================================");
-        //        //         totalClusters++;
-        //        //     }
-        //        // }
-        //        // System.out.println("\n total clusters: " + totalClusters);
+        // Display clusters
+        System.out.println("Final Clusters after Complete-Linkage:");
+        int totalClusters = 0;
+        int clusterNum = 1;
+        for (int i = 0; i < arrayListofTempClusters.size(); i++) {
+            if (arrayListofTempClusters.get(i).size() > 0) {
+                System.out.println("#" + clusterNum);
+                for (int j = 0; j < arrayListofTempClusters.get(i).size(); j++) {
+                    System.out.print(arrayListofTempClusters.get(i).get(j) + ", ");
+                }
+                System.out.println("\n total objects: " + arrayListofTempClusters.get(i).size()); // displays total objects
+                clusterNum++;
+                System.out.println();
+                System.out.println("================================");
+                totalClusters++;
+            }
+        }
+        System.out.println("\n total clusters: " + totalClusters);
         //
         //        // Filling the MATRIX after Complete-Linkage
         //        fillMatrix();
         //        displayMatrix();
 
-        // The MATRIX to fill after every clustering
+        // The MATRIX to fill
         File file = new File("F:/itembasedRS/datasets/90_10/itemMatrix.csv");
         boolean exists = file.exists();
         if (!exists) {

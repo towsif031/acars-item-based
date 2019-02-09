@@ -1345,15 +1345,15 @@ public class RecommenderSystem {
                         int coreObjectPositionOfOldCentroid = 0; // cluster position in arraylist
 
                         loopForOldCentroid:
-                            for (int n = 0; n < coreObjects.size(); n++) {
-                                for (int p = 0; p < arrayListofClusters.get(n).size(); p++) {
-                                    int matchCentroid = arrayListofClusters.get(n).get(p);
-                                    if (matchCentroid == oldCentroid) {
-                                        coreObjectPositionOfOldCentroid = n;
-                                        break loopForOldCentroid;
-                                    }
+                        for (int n = 0; n < coreObjects.size(); n++) {
+                            for (int p = 0; p < arrayListofClusters.get(n).size(); p++) {
+                                int matchCentroid = arrayListofClusters.get(n).get(p);
+                                if (matchCentroid == oldCentroid) {
+                                    coreObjectPositionOfOldCentroid = n;
+                                    break loopForOldCentroid;
                                 }
                             }
+                        }
 
                         // deleting coreObject of the previously visited centroid from coreObject arraylist
                         coreObjects.remove(coreObjectPositionOfOldCentroid);
@@ -1362,15 +1362,15 @@ public class RecommenderSystem {
                         int coreObjectPositionOfVisitedCentroid = 0;
 
                         loopForNewCentroid:
-                            for (int n = 0; n < coreObjects.size(); n++) {
-                                for (int p = 0; p < arrayListofClusters.get(n).size(); p++) {
-                                    int matchCentroid = arrayListofClusters.get(n).get(p);
-                                    if (matchCentroid == newCentroid) {
-                                        coreObjectPositionOfVisitedCentroid = n;
-                                        break loopForNewCentroid;
-                                    }
+                        for (int n = 0; n < coreObjects.size(); n++) {
+                            for (int p = 0; p < arrayListofClusters.get(n).size(); p++) {
+                                int matchCentroid = arrayListofClusters.get(n).get(p);
+                                if (matchCentroid == newCentroid) {
+                                    coreObjectPositionOfVisitedCentroid = n;
+                                    break loopForNewCentroid;
                                 }
                             }
+                        }
 
                         // adding all objects of the old cluster to the appropriate cluster
                         for (int r = 0; r < arrayListofClusters.get(coreObjectPositionOfOldCentroid).size(); r++) {
@@ -2170,27 +2170,27 @@ public class RecommenderSystem {
 
         //        arrayListofClusters = arrayListofTempClusters;
         //
-        //        // Display clusters
-        //        System.out.println("Final Clusters after Average-Linkage:");
-        //        int totalClusters = 0;
-        //        for (int i = 0; i < arrayListofClusters.size(); i++) {
-        //            if (arrayListofClusters.get(i).size() > 0) {
-        //                for (int j = 0; j < arrayListofClusters.get(i).size(); j++) {
-        //                    System.out.print(arrayListofClusters.get(i).get(j) + ", ");
-        //                }
-        //                System.out.println("\n total objects: " + arrayListofClusters.get(i).size()); // displays total objects
-        //                System.out.println();
-        //                System.out.println("================================");
-        //                totalClusters++;
-        //            }
-        //        }
-        //        System.out.println("\n total clusters: " + totalClusters);
+        // Display clusters
+        System.out.println("Final Clusters after Average-Linkage:");
+        int totalClusters = 0;
+        for (int i = 0; i < arrayListofTempClusters.size(); i++) {
+            if (arrayListofTempClusters.get(i).size() > 0) {
+                for (int j = 0; j < arrayListofTempClusters.get(i).size(); j++) {
+                    System.out.print(arrayListofTempClusters.get(i).get(j) + ", ");
+                }
+                System.out.println("\n total objects: " + arrayListofTempClusters.get(i).size()); // displays total objects
+                System.out.println();
+                System.out.println("================================");
+                totalClusters++;
+            }
+        }
+        System.out.println("\n total clusters: " + totalClusters);
         //
         //        // Filling the MATRIX after Average-Linkage
         //        fillMatrix();
         //        displayMatrix();
 
-        // The MATRIX to fill after every clustering
+        // The MATRIX to fill
         File file = new File("F:/itembasedRS/datasets/90_10/itemMatrix.csv");
         boolean exists = file.exists();
         if (!exists) {
